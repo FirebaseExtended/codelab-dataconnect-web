@@ -1,0 +1,28 @@
+# Movies
+# TODO: Fill out Movie table
+
+# Movie Metadata
+# Movie - MovieMetadata is a one-to-one relationship
+# TODO: Fill out MovieMetadata table
+
+# Actors
+# Suppose an actor can participate in multiple movies and movies can have multiple actors
+# Movie - Actors (or vice versa) is a many to many relationship
+# TODO: Fill out Actor table
+
+# Join table for many-to-many relationship for movies and actors
+# The 'key' param signifies the primary key(s) of this table
+# In this case, the keys are [movieId, actorId], the generated fields of the reference types [movie, actor]
+# TODO: Fill out MovieActor table
+
+# Users
+# Suppose a user can leave reviews for movies
+# user-reviews is a one to many relationship, movie-reviews is a one to many relationship, movie:user is a many to many relationship
+# TODO: Fill out User table
+
+# Join table for many-to-many relationship for users and favorite movies
+# TODO: Fill out FavoriteMovie table
+
+# Reviews
+# TODO: Fill out Review table
+

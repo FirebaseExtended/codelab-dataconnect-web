@@ -1,0 +1,7 @@
+.DS_Store
+dataconnect/node_modules/
+.firebase/
+app/node_modules
+.log
+app/dist/
+dataconnect/.dataconnect

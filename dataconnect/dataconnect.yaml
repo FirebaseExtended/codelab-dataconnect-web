@@ -1,0 +1,11 @@
+specVersion: "v1alpha"
+serviceId: "your-service-id"
+location: "us-central1"
+schema:
+  source: "./schema"
+  datasource:
+    postgresql:
+      database: "your-database"
+      cloudSql:
+        instanceId: "your-instance-id"
+connectorDirs: ["./movie-connector"]

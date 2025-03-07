@@ -14,30 +14,25 @@
  * limitations under the License.
  */
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Carousel from '@/components/carousel';
-import { handleGetTopMovies, handleGetLatestMovies } from '@/lib/MovieService';
+import { OrderDirection } from '@/lib/dataconnect-sdk';
+import { useHandleLatestMovies, useHandleTopMovies } from '@/lib/MovieService';
 
 export default function HomePage() {
-  const [topMovies, setTopMovies] = useState([]);
-  const [latestMovies, setLatestMovies] = useState([]);
+  const { data: topMoviesData, isLoading: topMoviesLoading } = useHandleTopMovies(10, OrderDirection.DESC );
+  const { data: latestMoviesData, isLoading: latestMoviesLoading } = useHandleLatestMovies(10, OrderDirection.DESC);
 
-  useEffect(() => {
-    async function fetchMovies() {
-      const topMoviesData = await handleGetTopMovies(10);
-      const latestMoviesData = await handleGetLatestMovies(10);
-
-      if (topMoviesData) setTopMovies(topMoviesData);
-      if (latestMoviesData) setLatestMovies(latestMoviesData);
-    }
-
-    fetchMovies();
-  }, []);
+  if(topMoviesLoading || latestMoviesLoading) {
+    return <div>Loading...</div>
+  }
 
   return (
     <div className="container mx-auto p-4 bg-gray-900 text-white shadow-md min-h-screen">
-      <Carousel title="Top 10 Movies" movies={topMovies} />
-      <Carousel title="Latest Movies" movies={latestMovies} />
+      <Carousel title="Top 10 Movies" movies={topMoviesData!.movies} />
+      <Carousel title="Latest Movies" movies={latestMoviesData!.movies} />
     </div>
   );
 }
+
+

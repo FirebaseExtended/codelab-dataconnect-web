@@ -18,3 +18,4 @@ generate:
     package: "@movie/dataconnect"
     outputDir: ../../app/src/lib/dataconnect-sdk
     packageJsonDir: "../../app"
+    react: true

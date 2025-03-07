@@ -17,7 +17,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { onAuthStateChanged, User } from "firebase/auth";
-import { handleGetCurrentUser, handleDeleteReview } from "@/lib/MovieService";
+import { useHandleDeleteReview, useHandleGetCurrentUser} from "@/lib/MovieService";
 import { MdStar } from "react-icons/md";
 import { AuthContext } from "@/lib/firebase";
 import MovieCard from "@/components/moviecard";
@@ -25,16 +25,15 @@ import MovieCard from "@/components/moviecard";
 export default function MyProfilePage() {
   const navigate = useNavigate();
   const [authUser, setAuthUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
   const auth = useContext(AuthContext);
 
-  const [user, setUser] = useState(null);
-
+  const {mutate: handleDeleteReview } = useHandleDeleteReview();
+  const { data: userData, isLoading, refetch } = useHandleGetCurrentUser(!!authUser);
+  const user = userData?.user;
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setAuthUser(user);
-        loadUserProfile();
       } else {
         navigate("/");
       }
@@ -43,28 +42,18 @@ export default function MyProfilePage() {
     return () => unsubscribe();
   }, [navigate, auth]);
 
-  async function loadUserProfile() {
-    try {
-      const userProfile = await handleGetCurrentUser();
-      setUser(userProfile);
-    } catch (error) {
-      console.error("Error loading user profile:", error);
-    } finally {
-      setLoading(false);
-    }
-  }
 
   async function deleteReview(reviewMovieId: string) {
     if (!authUser) return;
     try {
-      await handleDeleteReview(reviewMovieId);
-      loadUserProfile();
+      await handleDeleteReview({movieId: reviewMovieId});
+      refetch();
     } catch (error) {
       console.error("Error deleting review:", error);
     }
   }
 
-  if (loading) return <p>Loading...</p>;
+  if (isLoading) return <p>Loading...</p>;
   if (!user) return <p>User not found.</p>;
 
   return (

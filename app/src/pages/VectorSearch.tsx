@@ -22,7 +22,7 @@ export default function VectorSearchPage() {
   const [query, setQuery] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const [results, setResults] = useState([]);
+  const [results, setResults] = useState<any[]>([]);
 
   async function handleSearch(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();

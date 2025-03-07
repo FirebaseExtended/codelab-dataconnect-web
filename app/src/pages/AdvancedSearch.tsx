@@ -19,15 +19,22 @@ import { Link } from 'react-router-dom';
 import { FaSearch } from 'react-icons/fa';
 import { MdStar } from 'react-icons/md';
 import { handleSearchAll } from '@/lib/MovieService';
+import { SearchAllData } from '@/lib/dataconnect-sdk';
 
 const genres = ['', 'action', 'crime', 'drama', 'sci-fi', 'thriller', 'adventure'];
 
+interface SearchResults {
+moviesMatchingTitle?: SearchAllData['moviesMatchingTitle'];
+    moviesMatchingDescription?: SearchAllData['moviesMatchingDescription']
+    actors?:  SearchAllData['actorsMatchingName'];
+    reviews?: SearchAllData['reviewsMatchingText'];
+}
 export default function AdvancedSearchPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [releaseYearRange, setReleaseYearRange] = useState({ min: 1900, max: 2030 });
   const [genre, setGenre] = useState('');
   const [ratingRange, setRatingRange] = useState({ min: 1, max: 10 });
-  const [results, setResults] = useState({
+  const [results, setResults] = useState<SearchResults>({
     moviesMatchingTitle: [],
     moviesMatchingDescription: [],
     actors: [],

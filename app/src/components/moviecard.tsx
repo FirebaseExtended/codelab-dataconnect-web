@@ -19,11 +19,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { MdFavorite, MdFavoriteBorder, MdStar } from "react-icons/md";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { AuthContext } from "@/lib/firebase";
-import {
-  handleAddFavoritedMovie,
-  handleDeleteFavoritedMovie,
-  handleGetIfFavoritedMovie,
-} from "@/lib/MovieService";
+import { getIfFavoritedMovieRef } from "@/lib/dataconnect-sdk";
+import { useAddFavoritedMovie, useDeleteFavoritedMovie, useGetIfFavoritedMovie } from "@/lib/dataconnect-sdk/react";
 
 interface MovieCardProps {
   id: string;
@@ -43,25 +40,22 @@ export default function MovieCard({
   tags,
 }: MovieCardProps) {
   const [user, setUser] = useState<User | null>(null);
-  const [isFavorited, setIsFavorited] = useState(false);
   const auth = useContext(AuthContext);
   const navigate = useNavigate();
+const { mutate: handleAddFavoritedMovie } = useAddFavoritedMovie({
+    invalidate: [getIfFavoritedMovieRef({ movieId: id })],
+  });
+  const { mutate: handleDeleteFavoritedMovie } = useDeleteFavoritedMovie({
+    invalidate: [getIfFavoritedMovieRef({ movieId: id })],
+  });
+  const { data } = useGetIfFavoritedMovie({ movieId: id });
+  const isFavorited = data?.favorite_movie;
 
   useEffect(() => {
-    async function checkIfFavorited() {
-      try {
-        const isFav = await handleGetIfFavoritedMovie(id);
-        setIsFavorited(isFav);
-      } catch (error) {
-        console.error("Error checking if movie is favorited:", error);
-      }
-    }
+    
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setUser(user);
-        checkIfFavorited();
-      } else {
-        setIsFavorited(false);
       }
     });
 
@@ -73,13 +67,11 @@ export default function MovieCard({
     e.preventDefault();
     if (!user) return;
     try {
-      const isFav = await handleGetIfFavoritedMovie(id);
-      if (isFav) {
-        await handleDeleteFavoritedMovie(id);
+      if (isFavorited) {
+        await handleDeleteFavoritedMovie({ movieId: id });
       } else {
-        await handleAddFavoritedMovie(id);
+        await handleAddFavoritedMovie({ movieId: id });
       }
-      setIsFavorited(!isFav);
     } catch (error) {
       console.error("Error updating favorite status:", error);
     }

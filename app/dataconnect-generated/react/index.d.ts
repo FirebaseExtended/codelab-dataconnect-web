@@ -1,9 +1,24 @@
-import { GetDashboardDataData, GetUserProfileData, GetPriceHistoryData, GetPriceHistoryVariables, GetEmojiWhaleStatsData, GetEmojiHistoryStatsData, GetEmojiHistoryStatsVariables, GetTopTradersData, GetChronologicalTickerData, GetEmojiSparklinesData, SearchEmojisData, SearchEmojisVariables } from '../';
-import { UseDataConnectQueryResult, useDataConnectQueryOptions} from '@tanstack-query-firebase/react/data-connect';
-import { UseQueryResult} from '@tanstack/react-query';
+import { UpsertUserData, UpsertUserVariables, UpdateUserRoleData, UpdateUserRoleVariables, UpdateUserLocationData, UpdateUserLocationVariables, TriggerEventData, TriggerEventVariables, MarketMakerTradeData, MarketMakerTradeVariables, GetDashboardDataData, GetUserProfileData, GetPriceHistoryData, GetPriceHistoryVariables, GetEmojiWhaleStatsData, GetEmojiHistoryStatsData, GetEmojiHistoryStatsVariables, GetTopTradersData, GetChronologicalTickerData, GetEmojiSparklinesData, SearchEmojisData, SearchEmojisVariables } from '../';
+import { UseDataConnectQueryResult, useDataConnectQueryOptions, UseDataConnectMutationResult, useDataConnectMutationOptions} from '@tanstack-query-firebase/react/data-connect';
+import { UseQueryResult, UseMutationResult} from '@tanstack/react-query';
 import { DataConnect } from 'firebase/data-connect';
 import { FirebaseError } from 'firebase/app';
 
+
+export function useUpsertUser(options?: useDataConnectMutationOptions<UpsertUserData, FirebaseError, UpsertUserVariables>): UseDataConnectMutationResult<UpsertUserData, UpsertUserVariables>;
+export function useUpsertUser(dc: DataConnect, options?: useDataConnectMutationOptions<UpsertUserData, FirebaseError, UpsertUserVariables>): UseDataConnectMutationResult<UpsertUserData, UpsertUserVariables>;
+
+export function useUpdateUserRole(options?: useDataConnectMutationOptions<UpdateUserRoleData, FirebaseError, UpdateUserRoleVariables>): UseDataConnectMutationResult<UpdateUserRoleData, UpdateUserRoleVariables>;
+export function useUpdateUserRole(dc: DataConnect, options?: useDataConnectMutationOptions<UpdateUserRoleData, FirebaseError, UpdateUserRoleVariables>): UseDataConnectMutationResult<UpdateUserRoleData, UpdateUserRoleVariables>;
+
+export function useUpdateUserLocation(options?: useDataConnectMutationOptions<UpdateUserLocationData, FirebaseError, UpdateUserLocationVariables>): UseDataConnectMutationResult<UpdateUserLocationData, UpdateUserLocationVariables>;
+export function useUpdateUserLocation(dc: DataConnect, options?: useDataConnectMutationOptions<UpdateUserLocationData, FirebaseError, UpdateUserLocationVariables>): UseDataConnectMutationResult<UpdateUserLocationData, UpdateUserLocationVariables>;
+
+export function useTriggerEvent(options?: useDataConnectMutationOptions<TriggerEventData, FirebaseError, TriggerEventVariables>): UseDataConnectMutationResult<TriggerEventData, TriggerEventVariables>;
+export function useTriggerEvent(dc: DataConnect, options?: useDataConnectMutationOptions<TriggerEventData, FirebaseError, TriggerEventVariables>): UseDataConnectMutationResult<TriggerEventData, TriggerEventVariables>;
+
+export function useMarketMakerTrade(options?: useDataConnectMutationOptions<MarketMakerTradeData, FirebaseError, MarketMakerTradeVariables>): UseDataConnectMutationResult<MarketMakerTradeData, MarketMakerTradeVariables>;
+export function useMarketMakerTrade(dc: DataConnect, options?: useDataConnectMutationOptions<MarketMakerTradeData, FirebaseError, MarketMakerTradeVariables>): UseDataConnectMutationResult<MarketMakerTradeData, MarketMakerTradeVariables>;
 
 export function useGetDashboardData(options?: useDataConnectQueryOptions<GetDashboardDataData>): UseDataConnectQueryResult<GetDashboardDataData, undefined>;
 export function useGetDashboardData(dc: DataConnect, options?: useDataConnectQueryOptions<GetDashboardDataData>): UseDataConnectQueryResult<GetDashboardDataData, undefined>;

@@ -15,37 +15,33 @@
  */
 
 import { LogEventKey } from "./InspectorContext";
-// import {
-//   upsertUser,
-//   buyStock,
-//   sellStock,
-//   generateTradeHeadline,
-//   triggerEvent,
-//   panicSellPortfolio,
-//   updateUserLocation,
-//   triggerMarketCrash,
-//   marketMakerTrade,
-//   triggerSocialBoost,
-//   updateUserRole,
-// } from "@dataconnect/generated";
+import {
+  upsertUser,
+  // buyStock,
+  // sellStock,
+  // generateTradeHeadline,
+  triggerEvent,
+  updateUserLocation,
+  marketMakerTrade,
+  updateUserRole,
+} from "@dataconnect/generated";
 
-// Upsert (update or insert) a user's profile information and log the event
 export const executeUpsertUser = async (
   username: string,
   profileImage: string,
   logEvent: (key: LogEventKey, params?: any) => void,
 ): Promise<void> => {
-  // TODO: Implement upsertUser mutation
-  return;
+  logEvent("UPSERT_USER_MUTATION", { username });
+  await upsertUser({ username, profileImage });
 };
 
 // Update a user's role and log the event
 export const executeUpdateRole = async (
   role: string,
-  logEvent: (key: LogEventKey, params?: any) => void,
+  logEvent: (key: LogEventKey, params?: any) => void
 ): Promise<void> => {
-  // TODO: Implement updateUserRole mutation
-  return;
+  logEvent("UPDATE_USER_ROLE_MUTATION", { role });
+  await updateUserRole({ role });
 };
 
 // Update a user's city and geographic coordinates
@@ -54,8 +50,7 @@ export const executeUpdateLocation = async (
   latitude: number,
   longitude: number,
 ): Promise<void> => {
-  // TODO: Implement updateUserLocation mutation
-  return;
+  await updateUserLocation({ city, latitude, longitude });
 };
 
 // Execute a random market maker trade and adjust an emoji's stock price
@@ -64,9 +59,21 @@ export const executeManualBotTrade = async (
   username: string,
   logEvent: (key: LogEventKey, params?: any) => void,
 ): Promise<{ isBuy: boolean; tradeAmount: number }> => {
-  // TODO: Implement marketMakerTrade mutation
-  return { isBuy: true, tradeAmount: 0 };
+  logEvent("MARKET_MAKER_TRADE");
+  const isBuy = Math.random() > 0.5;
+  const tradeAmount = Number((Math.random() * (10 - 2) + 2).toFixed(2));
+
+  await marketMakerTrade({
+    emojiId: randomEmoji.id,
+    priceImpact: isBuy ? tradeAmount : -tradeAmount,
+    shareDelta: isBuy ? 10 : -10,
+    eventDesc: `Admin ${username} triggered market event: ${randomEmoji.symbol} went ${isBuy ? "up" : "down"} by $${tradeAmount.toFixed(2)}.`,
+    newPrice: Math.max(0.01, randomEmoji.currentPrice + (isBuy ? tradeAmount : -tradeAmount)),
+  });
+
+  return { isBuy, tradeAmount };
 };
+
 
 // Execute a stock purchase, validating limits and potentially generating an AI news headline
 export const executeBuyStock = async (

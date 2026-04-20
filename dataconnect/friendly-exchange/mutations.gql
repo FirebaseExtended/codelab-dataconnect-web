@@ -14,35 +14,97 @@
 #
 
 # Upserts a user record using the Firebase Auth uid expression as the primary key
-# mutation UpsertUser($username: String!, $profileImage: String!) @auth(level: USER) {
-#   # TODO: Implement user_upsert
-# }
+# Upsert (update or insert) a user's profile information
+mutation UpsertUser($username: String!, $profileImage: String!)
+@auth(level: USER) {
+  user_upsert(
+    data: {
+      id_expr: "auth.uid"
+      username: $username
+      profileImage: $profileImage
+    }
+  )
+}
 
 # Update a user's role
-# mutation UpdateUserRole($role: String!) @auth(level: USER) {
-#   # TODO: Implement user_update for role
-# }
+mutation UpdateUserRole($role: String!) @auth(level: USER) {
+  user_update(key: { id_expr: "auth.uid" }, data: { role: $role })
+}
 
 # Update a user's location
-# mutation UpdateUserLocation($city: String!, $latitude: Float!, $longitude: Float!) @auth(level: USER) {
-#   # TODO: Implement user_update for location
-# }
+mutation UpdateUserLocation(
+  $city: String!
+  $latitude: Float!
+  $longitude: Float!
+) @auth(level: USER) {
+  user_update(
+    key: { id_expr: "auth.uid" }
+    data: { city: $city, latitude: $latitude, longitude: $longitude }
+  )
+}
 
 # Trigger a new market event for an emoji
-# mutation TriggerEvent($emojiId: UUID!, $impact: Float!, $description: String!, $now: Timestamp!) @auth(level: USER) {
-#   # TODO: Implement event_insert
-# }
+mutation TriggerEvent(
+  $emojiId: UUID!
+  $impact: Float!
+  $description: String!
+  $now: Timestamp!
+) @auth(level: USER) {
+  event_insert(
+    data: {
+      userId_expr: "auth.uid"
+      emojiId: $emojiId
+      impact: $impact
+      description: $description
+      createdAt: $now
+    }
+  )
+}
 
 # Execute a market maker trade to adjust emoji price and shares
-# mutation MarketMakerTrade(
-#   $emojiId: UUID!
-#   $priceImpact: Float!
-#   $shareDelta: Int!
-#   $eventDesc: String!
-#   $newPrice: Float!
-# ) @auth(level: USER, insecureReason: "This operation is safe to expose to any user.") @transaction {
-#   # TODO: Implement user role check (@redact), stockOwnership_upsert, emoji_update, event_insert, and priceHistory_insert
-# }
+mutation MarketMakerTrade(
+  $emojiId: UUID!
+  $priceImpact: Float!
+  $shareDelta: Int!
+  $eventDesc: String!
+  $newPrice: Float!
+)
+@auth(
+  level: USER
+  insecureReason: "This operation is safe to expose to any user."
+)
+@transaction {
+  query @redact {
+    user(key: { id_expr: "auth.uid" })
+      @check(
+        expr: "this != null && this.role == 'ADMIN'",
+        message: "Access Denied: You must have the ADMIN role to deploy the Market Maker bot."
+      ) {
+      role
+    }
+  }
+  stockOwnership_upsert(
+    data: {
+      userId: "system_market_maker"
+      emojiId: $emojiId
+      shares_update: { inc: $shareDelta }
+    }
+  )
+  emoji_update(
+    id: $emojiId
+    data: { currentPrice_update: { inc: $priceImpact }, trend: $priceImpact }
+  )
+  event_insert(
+    data: {
+      userId: "system_market_maker"
+      emojiId: $emojiId
+      impact: $priceImpact
+      description: $eventDesc
+    }
+  )
+  priceHistory_insert(data: { emojiId: $emojiId, price: $newPrice })
+}
+
 
 # Buy shares of an emoji stock
 # mutation BuyStock($emojiId: UUID!, $amount: Int!, $isDiscounted: Boolean!) @auth(level: USER) {

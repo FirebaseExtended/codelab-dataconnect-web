@@ -1,4 +1,4 @@
-import { ConnectorConfig, DataConnect, QueryRef, QueryPromise, ExecuteQueryOptions, DataConnectSettings } from 'firebase/data-connect';
+import { ConnectorConfig, DataConnect, QueryRef, QueryPromise, ExecuteQueryOptions, MutationRef, MutationPromise, DataConnectSettings } from 'firebase/data-connect';
 
 export const connectorConfig: ConnectorConfig;
 export const dataConnectSettings: DataConnectSettings;
@@ -131,6 +131,21 @@ export interface GetUserProfileData {
   };
 }
 
+export interface MarketMakerTradeData {
+  stockOwnership_upsert: StockOwnership_Key;
+  emoji_update?: Emoji_Key | null;
+  event_insert: Event_Key;
+  priceHistory_insert: PriceHistory_Key;
+}
+
+export interface MarketMakerTradeVariables {
+  emojiId: UUIDString;
+  priceImpact: number;
+  shareDelta: number;
+  eventDesc: string;
+  newPrice: number;
+}
+
 export interface PriceHistory_Key {
   id: UUIDString;
   __typename?: 'PriceHistory_Key';
@@ -157,10 +172,108 @@ export interface StockOwnership_Key {
   __typename?: 'StockOwnership_Key';
 }
 
+export interface TriggerEventData {
+  event_insert: Event_Key;
+}
+
+export interface TriggerEventVariables {
+  emojiId: UUIDString;
+  impact: number;
+  description: string;
+  now: TimestampString;
+}
+
+export interface UpdateUserLocationData {
+  user_update?: User_Key | null;
+}
+
+export interface UpdateUserLocationVariables {
+  city: string;
+  latitude: number;
+  longitude: number;
+}
+
+export interface UpdateUserRoleData {
+  user_update?: User_Key | null;
+}
+
+export interface UpdateUserRoleVariables {
+  role: string;
+}
+
+export interface UpsertUserData {
+  user_upsert: User_Key;
+}
+
+export interface UpsertUserVariables {
+  username: string;
+  profileImage: string;
+}
+
 export interface User_Key {
   id: string;
   __typename?: 'User_Key';
 }
+
+interface UpsertUserRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: UpsertUserVariables): MutationRef<UpsertUserData, UpsertUserVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: UpsertUserVariables): MutationRef<UpsertUserData, UpsertUserVariables>;
+  operationName: string;
+}
+export const upsertUserRef: UpsertUserRef;
+
+export function upsertUser(vars: UpsertUserVariables): MutationPromise<UpsertUserData, UpsertUserVariables>;
+export function upsertUser(dc: DataConnect, vars: UpsertUserVariables): MutationPromise<UpsertUserData, UpsertUserVariables>;
+
+interface UpdateUserRoleRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: UpdateUserRoleVariables): MutationRef<UpdateUserRoleData, UpdateUserRoleVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: UpdateUserRoleVariables): MutationRef<UpdateUserRoleData, UpdateUserRoleVariables>;
+  operationName: string;
+}
+export const updateUserRoleRef: UpdateUserRoleRef;
+
+export function updateUserRole(vars: UpdateUserRoleVariables): MutationPromise<UpdateUserRoleData, UpdateUserRoleVariables>;
+export function updateUserRole(dc: DataConnect, vars: UpdateUserRoleVariables): MutationPromise<UpdateUserRoleData, UpdateUserRoleVariables>;
+
+interface UpdateUserLocationRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: UpdateUserLocationVariables): MutationRef<UpdateUserLocationData, UpdateUserLocationVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: UpdateUserLocationVariables): MutationRef<UpdateUserLocationData, UpdateUserLocationVariables>;
+  operationName: string;
+}
+export const updateUserLocationRef: UpdateUserLocationRef;
+
+export function updateUserLocation(vars: UpdateUserLocationVariables): MutationPromise<UpdateUserLocationData, UpdateUserLocationVariables>;
+export function updateUserLocation(dc: DataConnect, vars: UpdateUserLocationVariables): MutationPromise<UpdateUserLocationData, UpdateUserLocationVariables>;
+
+interface TriggerEventRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: TriggerEventVariables): MutationRef<TriggerEventData, TriggerEventVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: TriggerEventVariables): MutationRef<TriggerEventData, TriggerEventVariables>;
+  operationName: string;
+}
+export const triggerEventRef: TriggerEventRef;
+
+export function triggerEvent(vars: TriggerEventVariables): MutationPromise<TriggerEventData, TriggerEventVariables>;
+export function triggerEvent(dc: DataConnect, vars: TriggerEventVariables): MutationPromise<TriggerEventData, TriggerEventVariables>;
+
+interface MarketMakerTradeRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: MarketMakerTradeVariables): MutationRef<MarketMakerTradeData, MarketMakerTradeVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: MarketMakerTradeVariables): MutationRef<MarketMakerTradeData, MarketMakerTradeVariables>;
+  operationName: string;
+}
+export const marketMakerTradeRef: MarketMakerTradeRef;
+
+export function marketMakerTrade(vars: MarketMakerTradeVariables): MutationPromise<MarketMakerTradeData, MarketMakerTradeVariables>;
+export function marketMakerTrade(dc: DataConnect, vars: MarketMakerTradeVariables): MutationPromise<MarketMakerTradeData, MarketMakerTradeVariables>;
 
 interface GetDashboardDataRef {
   /* Allow users to create refs without passing in DataConnect */

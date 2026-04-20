@@ -12,8 +12,18 @@ For each operation, there is a wrapper hook that can be used to call the operati
 
 Here are all of the hooks that get generated:
 ```ts
-import { useGetDashboardData, useGetUserProfile, useGetPriceHistory, useGetEmojiWhaleStats, useGetEmojiHistoryStats, useGetTopTraders, useGetChronologicalTicker, useGetEmojiSparklines, useSearchEmojis } from '@dataconnect/generated/react';
+import { useUpsertUser, useUpdateUserRole, useUpdateUserLocation, useTriggerEvent, useMarketMakerTrade, useGetDashboardData, useGetUserProfile, useGetPriceHistory, useGetEmojiWhaleStats, useGetEmojiHistoryStats } from '@dataconnect/generated/react';
 // The types of these hooks are available in react/index.d.ts
+
+const { data, isPending, isSuccess, isError, error } = useUpsertUser(upsertUserVars);
+
+const { data, isPending, isSuccess, isError, error } = useUpdateUserRole(updateUserRoleVars);
+
+const { data, isPending, isSuccess, isError, error } = useUpdateUserLocation(updateUserLocationVars);
+
+const { data, isPending, isSuccess, isError, error } = useTriggerEvent(triggerEventVars);
+
+const { data, isPending, isSuccess, isError, error } = useMarketMakerTrade(marketMakerTradeVars);
 
 const { data, isPending, isSuccess, isError, error } = useGetDashboardData();
 
@@ -24,14 +34,6 @@ const { data, isPending, isSuccess, isError, error } = useGetPriceHistory(getPri
 const { data, isPending, isSuccess, isError, error } = useGetEmojiWhaleStats();
 
 const { data, isPending, isSuccess, isError, error } = useGetEmojiHistoryStats(getEmojiHistoryStatsVars);
-
-const { data, isPending, isSuccess, isError, error } = useGetTopTraders();
-
-const { data, isPending, isSuccess, isError, error } = useGetChronologicalTicker();
-
-const { data, isPending, isSuccess, isError, error } = useGetEmojiSparklines();
-
-const { data, isPending, isSuccess, isError, error } = useSearchEmojis(searchEmojisVars);
 
 ```
 
@@ -70,8 +72,23 @@ If a user is not using a supported framework, they can use the generated SDK dir
 Here's an example of how to use it with the first 5 operations:
 
 ```js
-import { getDashboardData, getUserProfile, getPriceHistory, getEmojiWhaleStats, getEmojiHistoryStats, getTopTraders, getChronologicalTicker, getEmojiSparklines, searchEmojis } from '@dataconnect/generated';
+import { upsertUser, updateUserRole, updateUserLocation, triggerEvent, marketMakerTrade, getDashboardData, getUserProfile, getPriceHistory, getEmojiWhaleStats, getEmojiHistoryStats } from '@dataconnect/generated';
 
+
+// Operation UpsertUser:  For variables, look at type UpsertUserVars in ../index.d.ts
+const { data } = await UpsertUser(dataConnect, upsertUserVars);
+
+// Operation UpdateUserRole:  For variables, look at type UpdateUserRoleVars in ../index.d.ts
+const { data } = await UpdateUserRole(dataConnect, updateUserRoleVars);
+
+// Operation UpdateUserLocation:  For variables, look at type UpdateUserLocationVars in ../index.d.ts
+const { data } = await UpdateUserLocation(dataConnect, updateUserLocationVars);
+
+// Operation TriggerEvent:  For variables, look at type TriggerEventVars in ../index.d.ts
+const { data } = await TriggerEvent(dataConnect, triggerEventVars);
+
+// Operation MarketMakerTrade:  For variables, look at type MarketMakerTradeVars in ../index.d.ts
+const { data } = await MarketMakerTrade(dataConnect, marketMakerTradeVars);
 
 // Operation GetDashboardData: 
 const { data } = await GetDashboardData(dataConnect);
@@ -87,18 +104,6 @@ const { data } = await GetEmojiWhaleStats(dataConnect);
 
 // Operation GetEmojiHistoryStats:  For variables, look at type GetEmojiHistoryStatsVars in ../index.d.ts
 const { data } = await GetEmojiHistoryStats(dataConnect, getEmojiHistoryStatsVars);
-
-// Operation GetTopTraders: 
-const { data } = await GetTopTraders(dataConnect);
-
-// Operation GetChronologicalTicker: 
-const { data } = await GetChronologicalTicker(dataConnect);
-
-// Operation GetEmojiSparklines: 
-const { data } = await GetEmojiSparklines(dataConnect);
-
-// Operation SearchEmojis:  For variables, look at type SearchEmojisVars in ../index.d.ts
-const { data } = await SearchEmojis(dataConnect, searchEmojisVars);
 
 
 ```

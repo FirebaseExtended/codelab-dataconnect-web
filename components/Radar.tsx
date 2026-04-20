@@ -20,8 +20,8 @@ import { useAuth } from "../lib/AuthContext";
 import { useToast } from "@/lib/ToastContext";
 import { executeUpdateLocation } from "../lib/ExchangeService";
 
-import { subscribe } from "@firebase/data-connect";
-import { getTrendingEmojisNearMeRef } from "@dataconnect/generated";
+// import { subscribe } from "@firebase/data-connect";
+// import { getTrendingEmojisNearMeRef } from "@dataconnect/generated";
 
 export default function LocalRadar() {
   const { user } = useAuth();

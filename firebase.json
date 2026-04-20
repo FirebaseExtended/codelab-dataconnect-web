@@ -1,13 +1,16 @@
 {
   "emulators": {
+    "dataconnect": {
+      "port": 9399
+    },
     "auth": {
       "port": 9099
     },
-    "hosting": {
-      "port": 5059
+    "functions": {
+      "port": 5001
     },
-    "dataconnect": {
-      "port": 9399
+    "hosting": {
+      "port": 5000
     },
     "ui": {
       "enabled": true
@@ -15,14 +18,43 @@
     "singleProjectMode": true
   },
   "dataconnect": {
-    "source": "./dataconnect"
+    "source": "dataconnect"
   },
+  "functions": [
+    {
+      "codebase": "default",
+      "disallowLegacyRuntimeConfig": true,
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ],
+      "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run lint",
+        "npm --prefix \"$RESOURCE_DIR\" run build"
+      ],
+      "source": "functions"
+    }
+  ],
   "hosting": {
-    "public": "app/dist",
+    "source": ".",
     "ignore": [
       "firebase.json",
       "**/.*",
       "**/node_modules/**"
-    ]
+    ],
+    "frameworksBackend": {
+      "region": "us-west4"
+    }
+  },
+  "auth": {
+    "providers": {
+      "googleSignIn": {
+        "oAuthBrandDisplayName": "Friendly-Exchange",
+        "supportEmail": "support@undefined.firebaseapp.com"
+      }
+    }
   }
 }

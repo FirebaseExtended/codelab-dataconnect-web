@@ -1,0 +1,17 @@
+connectorId: friendly-exchange
+generate:
+  javascriptSdk:
+      outputDir: ../../app/dataconnect-generated
+      package: "@dataconnect/generated"
+      packageJsonDir: ../..
+      react: true
+      angular: false
+      clientCache:
+          maxAge: 10s
+          maxSize: 300MB
+          storage: memory
+  adminNodeSdk:
+    outputDir: ../../functions/src/dataconnect-generated
+    package: "@dataconnect/admin-generated"
+    packageJsonDir: ../..
+

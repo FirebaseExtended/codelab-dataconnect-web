@@ -1,0 +1,36 @@
+{
+  "name": "friendly-exchange",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@dataconnect/admin-generated": "file:functions/src/dataconnect-generated",
+    "@dataconnect/generated": "file:app/dataconnect-generated",
+    "@headlessui/react": "^2.2.9",
+    "@tanstack-query-firebase/react": "^2.1.1",
+    "@tanstack/react-query": "^5.95.2",
+    "firebase": "^12.12.0",
+    "framer-motion": "^12.38.0",
+    "next": "16.2.1",
+    "next-themes": "^0.4.6",
+    "pigeon-maps": "^0.22.1",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "recharts": "^3.8.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.1",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}

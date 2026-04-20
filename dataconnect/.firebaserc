@@ -1,8 +1,0 @@
-{
-  "projects": {
-    "default": "fdc-quickstart-web"
-  },
-  "targets": {},
-  "etags": {},
-  "dataconnectEmulatorConfig": {}
-}

@@ -1,0 +1,414 @@
+# Copyright 2026 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+# Upserts a user record using the Firebase Auth uid expression as the primary key
+# Upsert (update or insert) a user's profile information
+mutation UpsertUser($username: String!, $profileImage: String!)
+@auth(level: USER) {
+  user_upsert(
+    data: {
+      id_expr: "auth.uid"
+      username: $username
+      profileImage: $profileImage
+    }
+  )
+}
+
+# Update a user's role
+mutation UpdateUserRole($role: String!) @auth(level: USER) {
+  user_update(key: { id_expr: "auth.uid" }, data: { role: $role })
+}
+
+# Update a user's location
+mutation UpdateUserLocation(
+  $city: String!
+  $latitude: Float!
+  $longitude: Float!
+) @auth(level: USER) {
+  user_update(
+    key: { id_expr: "auth.uid" }
+    data: { city: $city, latitude: $latitude, longitude: $longitude }
+  )
+}
+
+# Trigger a new market event for an emoji
+mutation TriggerEvent(
+  $emojiId: UUID!
+  $impact: Float!
+  $description: String!
+  $now: Timestamp!
+) @auth(level: USER) {
+  event_insert(
+    data: {
+      userId_expr: "auth.uid"
+      emojiId: $emojiId
+      impact: $impact
+      description: $description
+      createdAt: $now
+    }
+  )
+}
+
+# Execute a market maker trade to adjust emoji price and shares
+mutation MarketMakerTrade(
+  $emojiId: UUID!
+  $priceImpact: Float!
+  $shareDelta: Int!
+  $eventDesc: String!
+  $newPrice: Float!
+)
+@auth(
+  level: USER
+  insecureReason: "This operation is safe to expose to any user."
+)
+@transaction {
+  query @redact {
+    user(key: { id_expr: "auth.uid" })
+      @check(
+        expr: "this != null && this.role == 'ADMIN'"
+        message: "Access Denied: You must have the ADMIN role to deploy the Market Maker bot."
+      ) {
+      role
+    }
+  }
+  stockOwnership_upsert(
+    data: {
+      userId: "system_market_maker"
+      emojiId: $emojiId
+      shares_update: { inc: $shareDelta }
+    }
+  )
+  emoji_update(
+    id: $emojiId
+    data: { currentPrice_update: { inc: $priceImpact }, trend: $priceImpact }
+  )
+  event_insert(
+    data: {
+      userId: "system_market_maker"
+      emojiId: $emojiId
+      impact: $priceImpact
+      description: $eventDesc
+    }
+  )
+  priceHistory_insert(data: { emojiId: $emojiId, price: $newPrice })
+}
+
+# Buy shares of an emoji stock
+mutation BuyStock($emojiId: UUID!, $amount: Int!, $isDiscounted: Boolean!)
+@auth(level: USER) {
+  buyStock: _execute(
+    sql: """
+    WITH validated_params AS (
+      SELECT
+        $1::uuid AS emoji_id,
+        $2::int AS amount,
+        $3::boolean AS is_discounted,
+        $4::text AS user_id
+    ),
+    target_emoji AS (
+      SELECT
+        e.id,
+        (e.current_price * (CASE WHEN vp.is_discounted THEN 0.5 ELSE 1.0 END) * vp.amount) AS total_cost
+      FROM emoji e
+      CROSS JOIN validated_params vp
+      WHERE e.id = vp.emoji_id
+        AND vp.amount > 0
+        AND vp.amount <= 100
+    ),
+    deduct_funds AS (
+      UPDATE "user" u
+      SET points = u.points - te.total_cost
+      FROM target_emoji te, validated_params vp
+      WHERE u.id = vp.user_id AND u.points >= te.total_cost
+      RETURNING u.id
+    ),
+    upsert_ownership AS (
+      INSERT INTO stock_ownership (user_id, emoji_id, shares)
+      SELECT vp.user_id, vp.emoji_id, vp.amount
+      FROM validated_params vp
+      WHERE EXISTS (SELECT 1 FROM deduct_funds)
+      ON CONFLICT (user_id, emoji_id) DO UPDATE
+      SET shares = stock_ownership.shares + EXCLUDED.shares
+      RETURNING stock_ownership.emoji_id
+    ),
+    update_emoji AS (
+      UPDATE emoji e
+      SET
+        current_price = GREATEST(0.01, e.current_price + (e.current_price * 0.01 * vp.amount)),
+        trend = GREATEST(0.01, e.current_price + (e.current_price * 0.01 * vp.amount)) - e.current_price
+      FROM validated_params vp
+      WHERE e.id = vp.emoji_id AND EXISTS (SELECT 1 FROM deduct_funds)
+      RETURNING e.id, e.current_price, e.trend
+    )
+    INSERT INTO price_history (id, emoji_id, price, recorded_at)
+    SELECT gen_random_uuid(), ue.id, ue.current_price, NOW()
+    FROM update_emoji ue;
+    """
+    params: [$emojiId, $amount, $isDiscounted, { _expr: "auth.uid" }]
+  )
+}
+
+# Sell shares of an emoji stock
+mutation SellStock($emojiId: UUID!, $amount: Int!) @auth(level: USER) {
+  sellStock: _execute(
+    sql: """
+    WITH validated_params AS (
+      SELECT
+        $1::uuid AS emoji_id,
+        $2::int AS amount,
+        $3::text AS user_id
+    ),
+    target_emoji AS (
+      SELECT
+        e.id,
+        (e.current_price * vp.amount) AS total_revenue,
+        GREATEST(0.01, e.current_price * POWER(0.99, vp.amount)) AS new_price
+      FROM emoji e
+      CROSS JOIN validated_params vp
+      WHERE e.id = vp.emoji_id
+        AND vp.amount > 0
+        AND vp.amount <= 100
+    ),
+    check_shares AS (
+      SELECT so.user_id
+      FROM stock_ownership so
+      CROSS JOIN validated_params vp
+      WHERE so.user_id = vp.user_id
+        AND so.emoji_id = vp.emoji_id
+        AND so.shares >= vp.amount
+    ),
+    add_funds AS (
+      UPDATE "user" u
+      SET points = u.points + te.total_revenue
+      FROM target_emoji te, validated_params vp
+      WHERE u.id = vp.user_id AND EXISTS (SELECT 1 FROM check_shares)
+      RETURNING u.id
+    ),
+    update_ownership AS (
+      UPDATE stock_ownership so
+      SET shares = so.shares - vp.amount
+      FROM validated_params vp
+      WHERE so.user_id = vp.user_id
+        AND so.emoji_id = vp.emoji_id
+        AND EXISTS (SELECT 1 FROM check_shares)
+        AND EXISTS (SELECT 1 FROM add_funds)
+    ),
+    update_emoji AS (
+      UPDATE emoji e
+      SET
+        current_price = te.new_price,
+        trend = te.new_price - e.current_price
+      FROM target_emoji te, validated_params vp
+      WHERE e.id = vp.emoji_id
+        AND EXISTS (SELECT 1 FROM check_shares)
+        AND EXISTS (SELECT 1 FROM add_funds)
+      RETURNING e.id, e.current_price, e.trend
+    )
+    INSERT INTO price_history (id, emoji_id, price, recorded_at)
+    SELECT gen_random_uuid(), ue.id, ue.current_price, NOW()
+    FROM update_emoji ue;
+    """
+    params: [$emojiId, $amount, { _expr: "auth.uid" }]
+  )
+}
+
+# Generate an AI headline for a stock trade
+mutation GenerateTradeHeadline(
+  $emojiSymbol: String!
+  $emojiName: String!
+  $username: String!
+  $tradeAmount: Int!
+  $tradeCost: Float!
+  $tradeType: String!
+)
+@auth(
+  level: USER
+  insecureReason: "This operation is safe to expose to any user."
+) {
+  aiHeadline: generateTradeHeadline(
+    emojiSymbol: $emojiSymbol
+    emojiName: $emojiName
+    username: $username
+    tradeAmount: $tradeAmount
+    tradeCost: $tradeCost
+    tradeType: $tradeType
+  )
+}
+
+# Boost an emoji stock price based on an X.com post
+mutation ExecuteReadXPostTransaction(
+  $symbol: String!
+  $boostAmount: Float!
+  $tweetId: String!
+  $userId: String!
+) @auth(expr: "auth.uid == vars.userId") {
+  readXPost: _execute(
+    sql: """
+    WITH
+    check_user AS (
+      SELECT id FROM "user"
+      WHERE id = $4 AND boost_uses < 3
+    ),
+    check_tweet AS (
+      SELECT 1 WHERE NOT EXISTS (SELECT 1 FROM processed_tweet WHERE id = $3)
+    ),
+    update_user AS (
+      UPDATE "user" SET boost_uses = boost_uses + 1
+      WHERE id IN (SELECT id FROM check_user) AND EXISTS (SELECT 1 FROM check_tweet)
+      RETURNING id
+    ),
+    record_tweet AS (
+      INSERT INTO processed_tweet (id, user_id, processed_at)
+      SELECT $3, $4, NOW()
+      WHERE EXISTS (SELECT 1 FROM update_user)
+    ),
+    update_emoji AS (
+      UPDATE emoji
+      SET current_price = current_price + $2, trend = $2
+      WHERE symbol = $1 AND EXISTS (SELECT 1 FROM update_user)
+      RETURNING id, current_price
+    ),
+    insert_history AS (
+      INSERT INTO price_history (id, emoji_id, price, recorded_at)
+      SELECT gen_random_uuid(), id, current_price, NOW() FROM update_emoji
+    )
+    INSERT INTO event (id, user_id, emoji_id, impact, description, created_at)
+    SELECT gen_random_uuid(), $4, id, $2, 'Trending: ' || $1 || ' boosted by $' || $2::text || ' via X.com detection.', NOW()
+    FROM update_emoji
+    RETURNING emoji_id;
+    """
+    params: [$symbol, $boostAmount, $tweetId, $userId]
+  )
+}
+
+# Trigger a social media boost from a tweet URL
+mutation TriggerSocialBoost($tweetUrl: String!, $userId: String!)
+@auth(expr: "auth.uid == vars.userId") {
+  boostFromTweet(tweetUrl: $tweetUrl, userId: $userId) {
+    success
+    symbol
+    boostAmount
+    message
+  }
+}
+
+
+# The mutations below are unused by the application, but are useful examples for more complex cases
+
+# Liquidate all user shares and trigger a price drop
+mutation PanicSellPortfolio @auth(level: USER) {
+  panicSell: _execute(
+    sql: """
+    WITH
+    user_positions AS (
+      SELECT
+        so.emoji_id,
+        so.shares,
+        e.symbol,
+        e.current_price,
+        (so.shares * e.current_price) AS position_value
+      FROM stock_ownership so
+      JOIN emoji e ON e.id = so.emoji_id
+      WHERE so.user_id = $1
+        AND so.shares > 0
+    ),
+    crash_prices AS (
+      UPDATE emoji e
+      SET
+        current_price = GREATEST(0.01, e.current_price - (up.shares * e.current_price * 0.05)),
+        trend = -(up.shares * e.current_price * 0.05)
+      FROM user_positions up
+      WHERE e.id = up.emoji_id
+      RETURNING e.id, e.current_price
+    ),
+    zero_shares AS (
+      UPDATE stock_ownership
+      SET shares = 0
+      WHERE user_id = $1
+        AND shares > 0
+      RETURNING emoji_id
+    ),
+    log_events AS (
+      INSERT INTO event (id, user_id, emoji_id, impact, description, created_at)
+      SELECT
+        gen_random_uuid(),
+        $1,
+        up.emoji_id,
+        -(up.shares * up.current_price * 0.05),
+        'PANIC SELL: User liquidated ' || up.shares::text || ' shares of ' || up.symbol || '.',
+        NOW()
+      FROM user_positions up
+    ),
+    log_price_history AS (
+      INSERT INTO price_history (id, emoji_id, price, recorded_at)
+      SELECT
+        gen_random_uuid(),
+        cp.id,
+        cp.current_price,
+        NOW()
+      FROM crash_prices cp
+    ),
+    total_proceeds AS (
+      SELECT COALESCE(SUM(position_value), 0) AS total
+      FROM user_positions
+    )
+    UPDATE "user"
+    SET points = points + (SELECT total FROM total_proceeds)
+    WHERE id = $1
+    """
+    params: [{ _expr: "auth.uid" }]
+  )
+}
+
+# Trigger a market crash for emojis with a specific tag
+mutation TriggerMarketCrash($tag: String!) @auth(level: NO_ACCESS) {
+  marketCrash: _execute(
+    sql: """
+    WITH
+    target_emojis AS (
+      SELECT id, name, symbol, current_price
+      FROM emoji
+      WHERE $1 = ANY(tags)
+    ),
+    crashed_emojis AS (
+      UPDATE emoji
+      SET
+        current_price = GREATEST(0.01, current_price * 0.20),
+        trend         = -(current_price * 0.80)
+      WHERE id IN (SELECT id FROM target_emojis)
+      RETURNING id, name, symbol, current_price
+    ),
+    log_events AS (
+      INSERT INTO event (id, user_id, emoji_id, impact, description, created_at)
+      SELECT
+        gen_random_uuid(),
+        'system_market_maker',
+        ce.id,
+        -(ce.current_price * 0.80),
+        'MARKET CRASH: ' || $1 || ' sector selloff. ' || ce.symbol || ' (' || ce.name || ') crashed 80%.',
+        NOW()
+      FROM crashed_emojis ce
+    )
+    INSERT INTO price_history (id, emoji_id, price, recorded_at)
+    SELECT
+      gen_random_uuid(),
+      ce.id,
+      ce.current_price,
+      NOW()
+    FROM crashed_emojis ce;
+    """
+    params: [$tag]
+  )
+}

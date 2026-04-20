@@ -1,0 +1,503 @@
+# Copyright 2026 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+mutation SeedEmojiMarket @transaction {
+  user_upsertMany(
+    data: [
+      {id: "system_market_maker", username: "System", points: 0.0, profileImage: "https://firebase.google.com/static/images/brand-guidelines/logo-logomark.png", city: null, latitude: null, longitude: null}, 
+    ]
+  )
+  emoji_upsertMany(
+    data: [
+      {id: "e0000000-0000-0000-0000-000000000001",
+    symbol: "🍉",
+    name: "Watermelon",
+    description: "Watermelon: A juicy, sweet, and refreshing summer food fruit with a thick green rind and red, seed-speckled flesh perfect for hot weather picnics.",
+    tags: ["food", "summer", "fruit"],
+    currentPrice: 15.5,
+    trend: 2.5
+  },
+  {
+    id: "e0000000-0000-0000-0000-000000000002",
+    symbol: "🍦",
+    name: "Ice Cream",
+    description: "Ice Cream: A cold, sweet, and creamy frozen dessert food traditionally served scooped in a waffle cone or bowl during hot summer days.",
+    tags: ["food", "summer", "dessert"],
+    currentPrice: 8.2,
+    trend: -1.2
+  },
+  {
+    id: "e0000000-0000-0000-0000-000000000006",
+    symbol: "🍔",
+    name: "Hamburger",
+    description: "Hamburger: A savory fast food lunch or dinner meal consisting of a grilled beef patty, fresh lettuce, and cheese sandwiched between a soft baked bun.",
+    tags: ["food", "fast"],
+    currentPrice: 12.0,
+    trend: 0.0
+  },
+  {
+    id: "e0000000-0000-0000-0000-000000000007",
+    symbol: "🍎",
+    name: "Apple",
+    description: "Apple: A crisp, sweet, and healthy red fruit grown on a tree, often eaten as a daily food snack to keep the doctor away.",
+    tags: ["food", "fruit", "healthy"],
+    currentPrice: 5.0,
+    trend: -0.5
+  },
+  {
+    id: "e0000000-0000-0000-0000-000000000008",
+    symbol: "🍕",
+    name: "Pizza",
+    description: "Pizza: A hot, baked Italian food dish featuring a round doughy crust topped with rich tomato sauce, melted mozzarella cheese, and savory sliced toppings.",
+    tags: ["food", "dinner"],
+    currentPrice: 18.5,
+    trend: 3.0
+  },
+  {
+    id: "e0000000-0000-0000-0000-000000000009",
+    symbol: "🥑",
+    name: "Avocado",
+    description: "Avocado: A trendy, healthy green food fruit packed with good fats, commonly mashed and spread on toast for a modern, aesthetic brunch.",
+    tags: ["food", "healthy", "trendy"],
+    currentPrice: 28.0,
+    trend: 4.2
+  },
+  {
+    id: "e0000000-0000-0000-0000-000000000101",
+    symbol: "🍣",
+    name: "Sushi",
+    description: "Sushi: A traditional Japanese food delicacy made of vinegared sticky rice paired with fresh raw fish, savory seaweed, and salty soy sauce.",
+    tags: ["food", "fish"],
+    currentPrice: 35.0,
+    trend: 1.5
+  },
+  {
+    id: "e0000000-0000-0000-0000-000000000102",
+    symbol: "🌮",
+    name: "Taco",
+    description: "Taco: A popular Mexican food dish consisting of a folded crispy or soft tortilla shell filled with seasoned meat, spicy salsa, and fresh vegetables.",
+    tags: ["food", "dinner", "spicy"],
+    currentPrice: 14.0,
+    trend: -0.5
+  },
+  {
+    id: "e0000000-0000-0000-0000-000000000103",
+    symbol: "☕",
+    name: "Coffee",
+    description: "Coffee: A hot, energizing morning drink brewed from roasted dark beans to provide a much-needed caffeine energy boost to start the day.",
+    tags: ["food", "drink", "energy"],
+    currentPrice: 6.5,
+    trend: 0.8
+  },
+  {
+    id: "e0000000-0000-0000-0000-000000000104",
+    symbol: "🍺",
+    name: "Beer",
+    description: "Beer: A cold, alcoholic pub drink traditionally enjoyed in a frosty golden mug at a lively party, brewery, or while watching sports.",
+    tags: ["food", "drink", "party"],
+    currentPrice: 9.0,
+    trend: -0.2
+  },
+  {
+    id: "e0000000-0000-0000-0000-000000000004",
+    symbol: "🐈",
+    name: "Cat",
+    description: "Cat: A cute, independent feline animal pet known for purring softly, playful curiosity, and napping comfortably in cozy sunlit spots.",
+    tags: ["animal", "pet"],
+    currentPrice: 22.4,
+    trend: 0.0
+  },
+  {
+    id: "e0000000-0000-0000-0000-00000000000a",
+    symbol: "🐕",
+    name: "Dog",
+    description: "Dog: A loyal, energetic canine animal pet and man's best friend, always being a good boy ready for a walk, fetching a stick, or giving affection.",
+    tags: ["animal", "pet"],
+    currentPrice: 30.0,
+    trend: 0.0
+  },
+  {
+    id: "e0000000-0000-0000-0000-00000000000b",
+    symbol: "🐒",
+    name: "Monkey",
+    description: "Monkey: A playful, funny, and intelligent jungle ape animal known for wildly swinging through tall trees and peeling sweet yellow bananas.",
+    tags: ["animal", "jungle"],
+    currentPrice: 14.2,
+    trend: -2.0
+  },
+  {
+    id: "e0000000-0000-0000-0000-00000000000c",
+    symbol: "🐢",
+    name: "Turtle",
+    description: "Turtle: A slow-moving, peaceful nature reptile animal protected by a hard green shell, commonly found gracefully swimming in both oceans and freshwater ponds.",
+    tags: ["animal", "nature", "reptile"],
+    currentPrice: 7.5,
+    trend: 0.0
+  },
+  {
+    id: "e0000000-0000-0000-0000-00000000000d",
+    symbol: "🦋",
+    name: "Butterfly",
+    description: "Butterfly: A beautiful, flying summer nature bug animal with delicate, colorful wings that flutters gracefully among blooming garden flowers.",
+    tags: ["animal", "nature", "bug"],
+    currentPrice: 11.1,
+    trend: 1.5
+  },
+  {
+    id: "e0000000-0000-0000-0000-000000000105",
+    symbol: "🐧",
+    name: "Penguin",
+    description: "Penguin: A flightless, tuxedo-patterned bird animal that waddles awkwardly on cold snow and swims expertly through freezing arctic ice waters.",
+    tags: ["animal", "nature", "cold"],
+    currentPrice: 19.5,
+    trend: 2.1
+  },
+  {
+    id: "e0000000-0000-0000-0000-000000000106",
+    symbol: "🦁",
+    name: "Lion",
+    description: "Lion: A majestic, wild safari cat animal universally recognized as the brave king of the jungle, featuring a fierce roar and a thick golden mane.",
+    tags: ["animal", "wild"],
+    currentPrice: 42.0,
+    trend: -3.5
+  },
+  {
+    id: "e0000000-0000-0000-0000-000000000107",
+    symbol: "🦖",
+    name: "T-Rex",
+    description: "T-Rex: A massive, extinct prehistoric dinosaur animal known for its terrifying roar, rows of sharp teeth, and hilariously tiny arms.",
+    tags: ["animal", "extinct"],
+    currentPrice: 55.5,
+    trend: 10.0
+  },
+  {
+    id: "e0000000-0000-0000-0000-000000000108",
+    symbol: "🐙",
+    name: "Octopus",
+    description: "Octopus: A highly intelligent sea animal living deep in the ocean water, featuring a soft squishy body, large head, and eight long suction-cup tentacles.",
+    tags: ["animal", "ocean"],
+    currentPrice: 26.3,
+    trend: 1.1
+  },
+  {
+    id: "e0000000-0000-0000-0000-000000000003",
+    symbol: "😎",
+    name: "Cool Face",
+    description: "Cool Face: A confident, smiling yellow face wearing dark sunglasses, radiating a chill, laid-back summer aesthetic and a positive vibe.",
+    tags: ["face", "summer", "chill"],
+    currentPrice: 45.0,
+    trend: 5.0
+  },
+  {
+    id: "e0000000-0000-0000-0000-00000000000e",
+    symbol: "😀",
+    name: "Smile",
+    description: "Smile: A basic, universally recognized happy face expressing genuine joy, warmth, friendliness, and a generally positive emotion.",
+    tags: ["face", "emotion", "happy"],
+    currentPrice: 50.0,
+    trend: 0.0
+  },
+  {
+    id: "e0000000-0000-0000-0000-00000000000f",
+    symbol: "😂",
+    name: "Laugh",
+    description: "Laugh: A hilarious, crying-tears-of-joy face primarily used to react to a funny joke, an internet meme, or brilliant comedy.",
+    tags: ["face", "emotion", "meme"],
+    currentPrice: 65.0,
+    trend: 8.5
+  },
+  {
+    id: "e0000000-0000-0000-0000-000000000010",
+    symbol: "😭",
+    name: "Cry",
+    description: "Cry: A deeply emotional, sad face streaming with heavy tears, used to express intense grief, heartbreak, or feeling completely sadge.",
+    tags: ["face", "emotion", "sad"],
+    currentPrice: 10.0,
+    trend: -4.0
+  },
+  {
+    id: "e0000000-0000-0000-0000-000000000109",
+    symbol: "🤯",
+    name: "Mind Blown",
+    description: "Mind Blown: A shocked face with an exploding head, perfectly used when discovering a crazy hidden fact, experiencing pure awe, or feeling totally amazed.",
+    tags: ["face", "emotion", "shock"],
+    currentPrice: 88.0,
+    trend: 12.5
+  },
+  {
+    id: "e0000000-0000-0000-0000-00000000010a",
+    symbol: "😍",
+    name: "Heart Eyes",
+    description: "Heart Eyes: A lovely, infatuated face with glowing red hearts for eyes, openly expressing deep affection, a heavy crush, or finding something beautiful.",
+    tags: ["face", "emotion", "love"],
+    currentPrice: 32.5,
+    trend: 0.5
+  },
+  {
+    id: "e0000000-0000-0000-0000-00000000010b",
+    symbol: "🤡",
+    name: "Clown",
+    description: "Clown: A brightly painted, silly circus fool face often used as an internet meme to aggressively call out foolish behavior, bad opinions, or a joke.",
+    tags: ["face", "meme"],
+    currentPrice: 12.2,
+    trend: -6.6
+  },
+  {
+    id: "e0000000-0000-0000-0000-000000000011",
+    symbol: "🌳",
+    name: "Tree",
+    description: "Tree: A tall, leafy green nature plant with a solid wood trunk, representing lush wilderness forests, environmental health, and the earth.",
+    tags: ["nature", "plant", "earth"],
+    currentPrice: 8.0,
+    trend: 0.0
+  },
+  {
+    id: "e0000000-0000-0000-0000-000000000012",
+    symbol: "🌻",
+    name: "Sunflower",
+    description: "Sunflower: A tall, bright yellow summer nature flower that grows rapidly facing the sun, bringing cheerful aesthetic plant vibes to any garden.",
+    tags: ["nature", "summer", "flower"],
+    currentPrice: 12.5,
+    trend: 1.8
+  },
+  {
+    id: "e0000000-0000-0000-0000-000000000013",
+    symbol: "☀️",
+    name: "Sun",
+    description: "Sun: A bright, glowing yellow solar star that provides hot summer weather, a clear blue sky, and essential daylight warmth to the earth's nature.",
+    tags: ["nature", "summer", "weather"],
+    currentPrice: 25.0,
+    trend: 3.5
+  },
+  {
+    id: "e0000000-0000-0000-0000-00000000010c",
+    symbol: "🔥",
+    name: "Fire",
+    description: "Fire: A hot, blazing orange nature flame used to describe things that are completely lit, highly hyped, dangerously cool, or actively burning.",
+    tags: ["nature", "weather", "hype"],
+    currentPrice: 100.0,
+    trend: 8.0
+  },
+  {
+    id: "e0000000-0000-0000-0000-00000000010d",
+    symbol: "🌊",
+    name: "Wave",
+    description: "Wave: A crashing, beautiful blue ocean swell that brings salty sea water crashing to the nature beach, creating perfect conditions for a surf.",
+    tags: ["nature", "ocean"],
+    currentPrice: 18.0,
+    trend: -1.0
+  },
+  {
+    id: "e0000000-0000-0000-0000-00000000010e",
+    symbol: "⭐",
+    name: "Star",
+    description: "Star: A bright, glowing yellow celestial body illuminating the dark night sky in space, symbolizing magical excellence, nature, and success.",
+    tags: ["nature", "space"],
+    currentPrice: 40.0,
+    trend: 4.4
+  },
+  {
+    id: "e0000000-0000-0000-0000-000000000014",
+    symbol: "⚽",
+    name: "Soccer Ball",
+    description: "Soccer Ball: A black and white sphere ball kicked around the grassy pitch during a highly competitive team football sports game.",
+    tags: ["sports", "team"],
+    currentPrice: 20.0,
+    trend: 0.0
+  },
+  {
+    id: "e0000000-0000-0000-0000-000000000015",
+    symbol: "🏀",
+    name: "Basketball",
+    description: "Basketball: A bouncy orange ball used to jump, shoot hoops, and score points during an intense competitive team sports game on a wooden court.",
+    tags: ["sports", "team"],
+    currentPrice: 22.0,
+    trend: 2.2
+  },
+  {
+    id: "e0000000-0000-0000-0000-000000000016",
+    symbol: "🎾",
+    name: "Tennis Ball",
+    description: "Tennis Ball: A fuzzy, neon green bouncing ball hit rapidly back and forth over a net with a racket during an intense summer court sports rally.",
+    tags: ["sports", "summer"],
+    currentPrice: 16.0,
+    trend: -1.0
+  },
+  {
+    id: "e0000000-0000-0000-0000-00000000010f",
+    symbol: "🎱",
+    name: "8 Ball",
+    description: "8 Ball: A classic black billiard pool ball used in table sports, often associated with magic fortune-telling, shaking for answers, and testing your luck.",
+    tags: ["sports", "game", "magic"],
+    currentPrice: 14.5,
+    trend: 0.5
+  },
+  {
+    id: "e0000000-0000-0000-0000-000000000110",
+    symbol: "🥊",
+    name: "Boxing",
+    description: "Boxing: A thick, padded red leather glove used in the ring to throw a heavy punch and fight during a competitive athletic sports match.",
+    tags: ["sports", "fight"],
+    currentPrice: 28.0,
+    trend: 3.1
+  },
+  {
+    id: "e0000000-0000-0000-0000-000000000111",
+    symbol: "🏆",
+    name: "Trophy",
+    description: "Trophy: A shiny gold cup awarded to the number one champion to celebrate a massive sports victory, a first-place win, or an incredible achievement.",
+    tags: ["sports", "award", "hype"],
+    currentPrice: 75.0,
+    trend: 5.5
+  },
+  {
+    id: "e0000000-0000-0000-0000-000000000005",
+    symbol: "🚀",
+    name: "Rocket",
+    description: "Rocket: A powerful, thrust-driven spaceship launching violently into space, heavily used in tech and crypto communities to hype a coin going straight to the moon.",
+    tags: ["tech", "crypto", "hype"],
+    currentPrice: 150.0,
+    trend: 15.0
+  },
+  {
+    id: "e0000000-0000-0000-0000-000000000017",
+    symbol: "💻",
+    name: "Computer",
+    description: "Computer: A modern tech laptop device essential for remote work, writing internet code, software development, and digital media creation.",
+    tags: ["tech", "work", "code"],
+    currentPrice: 95.0,
+    trend: 4.5
+  },
+  {
+    id: "e0000000-0000-0000-0000-000000000018",
+    symbol: "📱",
+    name: "Phone",
+    description: "Phone: A pocket-sized mobile tech device featuring a sleek digital screen, primarily used for texting friends, scrolling social apps, and staying connected.",
+    tags: ["tech", "mobile", "app"],
+    currentPrice: 95.0,
+    trend: 0.0
+  },
+  {
+    id: "e0000000-0000-0000-0000-000000000112",
+    symbol: "🔋",
+    name: "Battery",
+    description: "Battery: A green, fully charged energy cylinder that provides essential electrical power to keep mobile tech devices running smoothly all day.",
+    tags: ["tech", "energy"],
+    currentPrice: 12.0,
+    trend: -0.8
+  },
+  {
+    id: "e0000000-0000-0000-0000-000000000113",
+    symbol: "💡",
+    name: "Lightbulb",
+    description: "Lightbulb: A glowing glass tech object universally symbolizing a sudden bright idea, a smart human innovation, and the power of modern electricity.",
+    tags: ["tech", "idea"],
+    currentPrice: 18.2,
+    trend: 1.2
+  },
+  {
+    id: "e0000000-0000-0000-0000-000000000114",
+    symbol: "📈",
+    name: "Chart Up",
+    description: "Chart Up: A green, upward-trending financial graph representing massive wealth accumulation, soaring tech stonks, making money, and booming markets.",
+    tags: ["tech", "finance", "hype"],
+    currentPrice: 200.0,
+    trend: 20.0
+  },
+  {
+    id: "e0000000-0000-0000-0000-000000000115",
+    symbol: "💰",
+    name: "Money Bag",
+    description: "Money Bag: A heavy canvas sack filled with rich cash and dollar signs, representing immense financial wealth, banking, and a luxury lifestyle.",
+    tags: ["finance", "wealth"],
+    currentPrice: 120.0,
+    trend: 4.0
+  },
+  {
+    id: "e0000000-0000-0000-0000-000000000116",
+    symbol: "💎",
+    name: "Gem",
+    description: "Gem: A sparkling, flawless blue diamond symbolizing vast financial wealth, precious jewels, and the popular crypto concept of having strong diamond hands.",
+    tags: ["finance", "crypto", "wealth"],
+    currentPrice: 300.0,
+    trend: 25.5
+  },
+  {
+    id: "e0000000-0000-0000-0000-000000000117",
+    symbol: "🏎️",
+    name: "Racecar",
+    description: "Racecar: A ridiculously fast, aerodynamic sports vehicle built for extreme speed, rapid drifting, and highly competitive F1 track driving.",
+    tags: ["vehicle", "sports"],
+    currentPrice: 85.0,
+    trend: 6.0
+  },
+  {
+    id: "e0000000-0000-0000-0000-000000000118",
+    symbol: "✈️",
+    name: "Airplane",
+    description: "Airplane: A massive, flying commercial aviation vehicle safely taking passengers through the sky for exciting global travel and exotic vacations.",
+    tags: ["vehicle", "travel"],
+    currentPrice: 50.0,
+    trend: -5.0
+  },
+  {
+    id: "e0000000-0000-0000-0000-000000000019",
+    symbol: "👻",
+    name: "Ghost",
+    description: "Ghost: A spooky, floating white spirit that supposedly haunts dark houses during Halloween, representing the dead, scary stories, and the paranormal.",
+    tags: ["spooky", "misc", "holiday"],
+    currentPrice: 6.66,
+    trend: -2.5
+  },
+  {
+    id: "e0000000-0000-0000-0000-000000000119",
+    symbol: "👽",
+    name: "Alien",
+    description: "Alien: A strange, green extraterrestrial face from deep space, representing weird UFO sightings, classic sci-fi movies, and cosmic mysteries.",
+    tags: ["space", "misc"],
+    currentPrice: 42.0,
+    trend: 0.0
+  },
+  {
+    id: "e0000000-0000-0000-0000-00000000011a",
+    symbol: "🤖",
+    name: "Robot",
+    description: "Robot: A futuristic, mechanical AI machine made of heavy metal, featuring blinking tech lights and a classic beep-boop artificial intelligence personality.",
+    tags: ["tech", "ai", "future"],
+    currentPrice: 180.0,
+    trend: 18.0
+  }
+]
+  )
+  priceHistory_upsertMany(
+    data: [
+      {id: "d0000000-0000-0000-0000-000000000001", emojiId: "e0000000-0000-0000-0000-000000000005", price: 100.0, recordedAt: "2024-01-01T10:00:00Z"}, 
+      {id: "d0000000-0000-0000-0000-000000000002", emojiId: "e0000000-0000-0000-0000-000000000005", price: 110.0, recordedAt: "2024-01-01T11:00:00Z"}, 
+      {id: "d0000000-0000-0000-0000-000000000003", emojiId: "e0000000-0000-0000-0000-000000000005", price: 105.0, recordedAt: "2024-01-01T12:00:00Z"}, 
+      {id: "d0000000-0000-0000-0000-000000000004", emojiId: "e0000000-0000-0000-0000-000000000005", price: 130.0, recordedAt: "2024-01-01T13:00:00Z"}, 
+      {id: "d0000000-0000-0000-0000-000000000005", emojiId: "e0000000-0000-0000-0000-000000000005", price: 150.0, recordedAt: "2024-01-01T14:00:00Z"}
+    ]
+  )
+  event_upsertMany(
+    data: [
+      {id: "f0000000-0000-0000-0000-000000000001", userId: "system_market_maker", emojiId: "e0000000-0000-0000-0000-000000000001", description: "Summer heatwave drives unprecedented watermelon demand.", impact: 4.5}, 
+      {id: "f0000000-0000-0000-0000-000000000002", userId: "system_market_maker", emojiId: "e0000000-0000-0000-0000-000000000005", description: "Space agency posts a rocket emoji on social media.", impact: 35.0}, 
+      {id: "f0000000-0000-0000-0000-000000000005", userId: "system_market_maker", emojiId: "e0000000-0000-0000-0000-000000000009", description: "Avocado toast prices hit record highs globally.", impact: 8.5}, 
+      {id: "f0000000-0000-0000-0000-000000000008", userId: "system_market_maker", emojiId: "e0000000-0000-0000-0000-000000000017", description: "A major tech conference was just announced.", impact: 12.0}, 
+      {id: "f0000000-0000-0000-0000-00000000000a", userId: "system_market_maker", emojiId: "e0000000-0000-0000-0000-000000000008", description: "It's National Pizza Day! Sales are through the roof.", impact: 5.5}, 
+      {id: "f0000000-0000-0000-0000-00000000000b", userId: "system_market_maker", emojiId: "e0000000-0000-0000-0000-00000000011a", description: "New AI model released, robotics sector sees massive inflow.", impact: 18.0}
+    ]
+  )
+}

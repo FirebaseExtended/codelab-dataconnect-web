@@ -1,0 +1,335 @@
+# Copyright 2026 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+# Get dashboard data including top emojis by price and recent market events
+query GetDashboardData
+@auth(
+  level: PUBLIC
+  insecureReason: "This operation is safe to expose to the public."
+)
+@refresh(onMutationExecuted: { operation: "BuyStock" })
+@refresh(onMutationExecuted: { operation: "SellStock" })
+@refresh(onMutationExecuted: { operation: "TriggerEvent" })
+@refresh(onMutationExecuted: { operation: "MarketMakerTrade" })
+@refresh(onMutationExecuted: { operation: "TriggerSocialBoost" }) {
+  emojis(orderBy: [{ currentPrice: DESC }]) {
+    id
+    symbol
+    name
+    description
+    currentPrice
+    trend
+  }
+  events(orderBy: [{ createdAt: DESC }], limit: 15) {
+    id
+    description
+    impact
+    createdAt
+    user {
+      username
+      profileImage
+    }
+    emoji {
+      symbol
+    }
+  }
+}
+
+# Get current authenticated user profile and their stock ownership using auth.uid
+query GetUserProfile
+@auth(level: USER)
+@refresh(onMutationExecuted: { operation: "BuyStock" })
+@refresh(onMutationExecuted: { operation: "SellStock" })
+@refresh(onMutationExecuted: { operation: "UpdateUserLocation" })
+@refresh(onMutationExecuted: { operation: "PanicSellPortfolio" })
+@refresh(onMutationExecuted: { operation: "UpdateUserRole" }) {
+  user(id_expr: "auth.uid") {
+    points
+    username
+    profileImage
+    role
+    stockOwnerships_on_user {
+      shares
+      emoji {
+        id
+        symbol
+        currentPrice
+        name
+      }
+    }
+    city
+    latitude
+    longitude
+  }
+}
+
+# Get price history for a specific emoji ordered by time
+query GetPriceHistory($emojiId: UUID!, $limit: Int)
+@auth(
+  level: PUBLIC
+  insecureReason: "This operation is safe to expose to the public."
+)
+@refresh(onMutationExecuted: { operation: "BuyStock" })
+@refresh(onMutationExecuted: { operation: "SellStock" })
+@refresh(onMutationExecuted: { operation: "MarketMakerTrade" })
+@refresh(onMutationExecuted: { operation: "PanicSellPortfolio" })
+@refresh(onMutationExecuted: { operation: "TriggerMarketCrash" }) {
+  priceHistories(
+    where: { emojiId: { eq: $emojiId } }
+    orderBy: [{ recordedAt: ASC }]
+    limit: $limit
+  ) {
+    price
+    recordedAt
+  }
+}
+
+# Get emoji whale statistics to identify top shareholders from emojiWhaleStats view
+query GetEmojiWhaleStats
+@auth(
+  level: PUBLIC
+  insecureReason: "This operation is safe to expose to the public."
+)
+@refresh(onMutationExecuted: { operation: "BuyStock" })
+@refresh(onMutationExecuted: { operation: "SellStock" })
+@refresh(onMutationExecuted: { operation: "MarketMakerTrade" })
+@refresh(onMutationExecuted: { operation: "PanicSellPortfolio" }) {
+  emojiWhaleStats {
+    emojiId
+    whaleUsername
+    whaleProfileImage
+    whaleShares
+    totalSupply
+    whalePercentage
+  }
+}
+
+# Get historical price and moving average stats for a specific emoji from emojiHistoryStats view
+query GetEmojiHistoryStats($emojiId: UUID!)
+@auth(
+  level: PUBLIC
+  insecureReason: "This operation is safe to expose to the public."
+)
+@refresh(onMutationExecuted: { operation: "BuyStock" })
+@refresh(onMutationExecuted: { operation: "SellStock" })
+@refresh(onMutationExecuted: { operation: "MarketMakerTrade" })
+@refresh(onMutationExecuted: { operation: "PanicSellPortfolio" })
+@refresh(onMutationExecuted: { operation: "TriggerMarketCrash" }) {
+  emojiHistoryStats(
+    where: { emojiId: { eq: $emojiId } }
+    orderBy: [{ recordedAt: ASC }]
+    limit: 50
+  ) {
+    price
+    movingAverage
+    recordedAt
+  }
+}
+
+# Get chronological market ticker feed of recent events from tickerFeeds view
+query GetChronologicalTicker
+@auth(
+  level: PUBLIC
+  insecureReason: "This operation is safe to expose to the public."
+)
+@refresh(onMutationExecuted: { operation: "BuyStock" })
+@refresh(onMutationExecuted: { operation: "SellStock" })
+@refresh(onMutationExecuted: { operation: "TriggerEvent" })
+@refresh(onMutationExecuted: { operation: "MarketMakerTrade" })
+@refresh(onMutationExecuted: { operation: "PanicSellPortfolio" })
+@refresh(onMutationExecuted: { operation: "TriggerMarketCrash" }) {
+  tickerFeeds(orderBy: [{ eventTime: DESC }], limit: 30) {
+    type
+    symbol
+    name
+    currentPrice
+    trend
+    description
+    eventTime
+  }
+}
+
+# Get simple price points for rendering emoji sparkline charts from emojiSparklines view
+query GetEmojiSparklines
+@auth(
+  level: PUBLIC
+  insecureReason: "This operation is safe to expose to the public."
+)
+@refresh(onMutationExecuted: { operation: "BuyStock" })
+@refresh(onMutationExecuted: { operation: "SellStock" })
+@refresh(onMutationExecuted: { operation: "MarketMakerTrade" })
+@refresh(onMutationExecuted: { operation: "PanicSellPortfolio" })
+@refresh(onMutationExecuted: { operation: "TriggerMarketCrash" }) {
+  emojiSparklines {
+    emojiId
+    price
+    recordedAt
+  }
+}
+
+# List top traders ordered by rank from topTraders view
+query GetTopTraders
+@auth(
+  level: PUBLIC
+  insecureReason: "This operation is safe to expose to the public."
+)
+@refresh(onMutationExecuted: { operation: "BuyStock" })
+@refresh(onMutationExecuted: { operation: "SellStock" })
+@refresh(onMutationExecuted: { operation: "TriggerEvent" })
+@refresh(onMutationExecuted: { operation: "MarketMakerTrade" })
+@refresh(onMutationExecuted: { operation: "PanicSellPortfolio" })
+@refresh(onMutationExecuted: { operation: "TriggerMarketCrash" }) {
+  topTraders(orderBy: [{ rank: ASC }]) {
+    id
+    username
+    profileImage
+    netWorth
+    rank
+  }
+}
+
+# Search emojis using full-text search query
+query SearchEmojis($query: String)
+@auth(
+  level: PUBLIC
+  insecureReason: "This operation is safe to expose to the public."
+)
+@refresh(onMutationExecuted: { operation: "BuyStock" })
+@refresh(onMutationExecuted: { operation: "SellStock" })
+@refresh(onMutationExecuted: { operation: "TriggerEvent" })
+@refresh(onMutationExecuted: { operation: "MarketMakerTrade" })
+@refresh(onMutationExecuted: { operation: "PanicSellPortfolio" })
+@refresh(onMutationExecuted: { operation: "TriggerMarketCrash" }) {
+  emojis_search(query: $query) {
+    id
+    symbol
+    name
+    description
+    currentPrice
+    trend
+  }
+}
+
+# Get top trending emojis partitioned by user city using native SQL
+query GetTopEmojisByCity
+@auth(
+  level: PUBLIC
+  insecureReason: "This operation is safe to expose to the public."
+)
+@refresh(onMutationExecuted: { operation: "BuyStock" })
+@refresh(onMutationExecuted: { operation: "SellStock" })
+@refresh(onMutationExecuted: { operation: "UpdateUserLocation" })
+@refresh(onMutationExecuted: { operation: "MarketMakerTrade" })
+@refresh(onMutationExecuted: { operation: "PanicSellPortfolio" }) {
+  cityTrends: _select(
+    sql: """
+    WITH city_shares AS (
+      SELECT
+        u.city,
+        AVG(u.latitude) as latitude,
+        AVG(u.longitude) as longitude,
+        e.id as emoji_id,
+        e.symbol,
+        e.name,
+        SUM(so.shares) as total_shares,
+        RANK() OVER (PARTITION BY u.city ORDER BY SUM(so.shares) DESC) as rank
+      FROM stock_ownership so
+      JOIN "user" u ON so.user_id = u.id
+      JOIN emoji e ON so.emoji_id = e.id
+      WHERE u.city IS NOT NULL AND u.latitude IS NOT NULL AND so.shares > 0
+      GROUP BY u.city, e.id, e.symbol, e.name
+    )
+    SELECT city, latitude, longitude, emoji_id, symbol, name, total_shares
+    FROM city_shares
+    WHERE rank = 1
+    ORDER BY city ASC
+    """
+    params: []
+  )
+}
+
+# Get trending emojis within a geographic radius using native SQL and PostGIS extenstion
+query GetTrendingEmojisNearMe(
+  $userLng: Float!
+  $userLat: Float!
+  $radiusMeters: Float!
+)
+@auth(
+  level: PUBLIC
+  insecureReason: "This operation is safe to expose to the public."
+)
+@refresh(onMutationExecuted: { operation: "BuyStock" })
+@refresh(onMutationExecuted: { operation: "SellStock" })
+@refresh(onMutationExecuted: { operation: "UpdateUserLocation" })
+@refresh(onMutationExecuted: { operation: "MarketMakerTrade" })
+@refresh(onMutationExecuted: { operation: "PanicSellPortfolio" }) {
+  regionalTrends: _select(
+    sql: """
+    SELECT
+      e.id,
+      e.symbol,
+      e.name,
+      e.current_price,
+      e.trend,
+      COUNT(so.shares)   AS regional_holders,
+      SUM(so.shares)     AS regional_shares
+    FROM emoji e
+    JOIN stock_ownership so ON so.emoji_id = e.id
+    JOIN "user" u            ON u.id = so.user_id
+    WHERE u.latitude  IS NOT NULL
+      AND u.longitude IS NOT NULL
+      AND so.shares > 0
+      AND ST_DWithin(
+        ST_MakePoint(u.longitude, u.latitude)::geography,
+        ST_MakePoint($1, $2)::geography,
+        $3
+      )
+    GROUP BY e.id, e.symbol, e.name, e.current_price, e.trend
+    ORDER BY regional_shares DESC
+    LIMIT 10
+    """
+    params: [$userLng, $userLat, $radiusMeters]
+  )
+}
+
+# Search emoji descriptions using Vertex AI embeddings
+query VectorSearchEmojis($query: String!)
+@auth(
+  level: PUBLIC
+  insecureReason: "This operation is safe to expose to the public."
+)
+@refresh(onMutationExecuted: { operation: "BuyStock" })
+@refresh(onMutationExecuted: { operation: "SellStock" })
+@refresh(onMutationExecuted: { operation: "TriggerEvent" })
+@refresh(onMutationExecuted: { operation: "MarketMakerTrade" })
+@refresh(onMutationExecuted: { operation: "PanicSellPortfolio" })
+@refresh(onMutationExecuted: { operation: "TriggerMarketCrash" }) {
+  emojis_descriptionEmbedding_similarity(
+    compare_embed: { model: "text-multilingual-embedding-002", text: $query }
+    method: COSINE
+    within: 2
+    limit: 15
+  ) {
+    id
+    symbol
+    name
+    description
+    currentPrice
+    trend
+    _metadata {
+      distance
+    }
+  }
+}

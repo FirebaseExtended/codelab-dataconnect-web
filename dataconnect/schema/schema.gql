@@ -1,42 +1,82 @@
- # Copyright 2024 Google LLC
- #
- # Licensed under the Apache License, Version 2.0 (the "License");
- # you may not use this file except in compliance with the License.
- # You may obtain a copy of the License at
- #
- #      http://www.apache.org/licenses/LICENSE-2.0
- #
- # Unless required by applicable law or agreed to in writing, software
- # distributed under the License is distributed on an "AS IS" BASIS,
- # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- # See the License for the specific language governing permissions and
- # limitations under the License.
-
-# Movies
-# TODO: Fill out Movie table
-
-# Movie Metadata
-# Movie - MovieMetadata is a one-to-one relationship
-# TODO: Fill out MovieMetadata table
-
-# Actors
-# Suppose an actor can participate in multiple movies and movies can have multiple actors
-# Movie - Actors (or vice versa) is a many to many relationship
-# TODO: Fill out Actor table
-
-# Join table for many-to-many relationship for movies and actors
-# The 'key' param signifies the primary key(s) of this table
-# In this case, the keys are [movieId, actorId], the generated fields of the reference types [movie, actor]
-# TODO: Fill out MovieActor table
+# Copyright 2026 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
 
 # Users
-# Suppose a user can leave reviews for movies
-# user-reviews is a one to many relationship, movie-reviews is a one to many relationship, movie:user is a many to many relationship
-# TODO: Fill out User table
+# user-stockOwnership is a one-to-many relationship, user-events is a one-to-many relationship
+# Utilizes the Firebase Auth uid expression as the primary key
+type User @table {
+  id: String! @default(expr: "auth.uid")
+  username: String!
+  profileImage: String
+  role: String! @default(value: "USER")
+  points: Float! @default(value: 100.0)
+  boostUses: Int! @default(value: 0)
+  city: String @default(value: "Las Vegas")
+  latitude: Float @default(value: 36.1699)
+  longitude: Float @default(value: -115.1398)
+}
 
-# Join table for many-to-many relationship for users and favorite movies
-# TODO: Fill out FavoriteMovie table
+# Emojis
+# emoji-stockOwnership is a one-to-many relationship, emoji-priceHistory is a one-to-many relationship
+# Implements @searchable directives for full-text search
+# Optional: implements Vector type for semantic search
+type Emoji @table {
+  id: UUID! @default(expr: "uuidV4()")
+  symbol: String!
+  name: String! @searchable
+  tags: [String!]
+  description: String! @searchable
+  descriptionEmbedding: Vector @col(size: 768)
+  currentPrice: Float! @default(value: 10.0)
+  trend: Float! @default(value: 0.0)
+}
 
-# Reviews
-# TODO: Fill out Review table
+# Join table for many-to-many relationship between users and emojis
+# The 'key' param signifies the primary key(s) of this table
+# In this case, the keys are [userId, emojiId], the generated fields of the reference types [user, emoji]
+type StockOwnership @table(key: ["user", "emoji"]) {
+  user: User!
+  emoji: Emoji!
+  shares: Int! @default(value: 0)
+}
 
+# Events
+# Event-User is a many-to-one relationship, Event-Emoji is a many-to-one relationship
+# Evaluates the createdAt timestamp purely on the server side using the request.time expression
+type Event @table {
+  id: UUID! @default(expr: "uuidV4()")
+  user: User!
+  emoji: Emoji!
+  impact: Float!
+  description: String!
+  createdAt: Timestamp! @default(expr: "request.time")
+}
+
+# Price History
+# PriceHistory-Emoji is a many-to-one relationship
+type PriceHistory @table {
+  id: UUID! @default(expr: "uuidV4()")
+  emoji: Emoji!
+  price: Float!
+  recordedAt: Timestamp! @default(expr: "request.time")
+}
+
+# Processed Tweets
+# ProcessedTweet-User is a many-to-one relationship
+type ProcessedTweet @table {
+  id: String!
+  user: User!
+  processedAt: Timestamp! @default(expr: "request.time")
+}

@@ -1,0 +1,77 @@
+# Copyright 2026 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+mutation AddEmojiVectors {
+  # Food & Drink
+  emoji1: emoji_update(id: "e0000000-0000-0000-0000-000000000001", data: { descriptionEmbedding_embed: { model: "text-multilingual-embedding-002", text: "summer food fruit juicy sweet" } })
+  emoji2: emoji_update(id: "e0000000-0000-0000-0000-000000000002", data: { descriptionEmbedding_embed: { model: "text-multilingual-embedding-002", text: "summer food dessert sweet cold" } })
+  emoji3: emoji_update(id: "e0000000-0000-0000-0000-000000000006", data: { descriptionEmbedding_embed: { model: "text-multilingual-embedding-002", text: "food burger fast hungry lunch" } })
+  emoji4: emoji_update(id: "e0000000-0000-0000-0000-000000000007", data: { descriptionEmbedding_embed: { model: "text-multilingual-embedding-002", text: "food fruit healthy doctor snack" } })
+  emoji5: emoji_update(id: "e0000000-0000-0000-0000-000000000008", data: { descriptionEmbedding_embed: { model: "text-multilingual-embedding-002", text: "food slice hot cheese dinner" } })
+  emoji6: emoji_update(id: "e0000000-0000-0000-0000-000000000009", data: { descriptionEmbedding_embed: { model: "text-multilingual-embedding-002", text: "food healthy trendy toast green" } })
+  emoji7: emoji_update(id: "e0000000-0000-0000-0000-000000000101", data: { descriptionEmbedding_embed: { model: "text-multilingual-embedding-002", text: "food raw fish rice japan sea" } })
+  emoji8: emoji_update(id: "e0000000-0000-0000-0000-000000000102", data: { descriptionEmbedding_embed: { model: "text-multilingual-embedding-002", text: "food mexico spicy shell meat" } })
+  emoji9: emoji_update(id: "e0000000-0000-0000-0000-000000000103", data: { descriptionEmbedding_embed: { model: "text-multilingual-embedding-002", text: "drink morning bean energy hot" } })
+  emoji10: emoji_update(id: "e0000000-0000-0000-0000-000000000104", data: { descriptionEmbedding_embed: { model: "text-multilingual-embedding-002", text: "drink alcohol pub party cold" } })
+
+  # Animals & Nature
+  emoji11: emoji_update(id: "e0000000-0000-0000-0000-000000000004", data: { descriptionEmbedding_embed: { model: "text-multilingual-embedding-002", text: "animal pet cute feline kitty" } })
+  emoji12: emoji_update(id: "e0000000-0000-0000-0000-00000000000a", data: { descriptionEmbedding_embed: { model: "text-multilingual-embedding-002", text: "animal pet good boy canine puppy" } })
+  emoji13: emoji_update(id: "e0000000-0000-0000-0000-00000000000b", data: { descriptionEmbedding_embed: { model: "text-multilingual-embedding-002", text: "animal funny ape jungle banana" } })
+  emoji14: emoji_update(id: "e0000000-0000-0000-0000-00000000000c", data: { descriptionEmbedding_embed: { model: "text-multilingual-embedding-002", text: "animal nature slow shell reptile" } })
+  emoji15: emoji_update(id: "e0000000-0000-0000-0000-00000000000d", data: { descriptionEmbedding_embed: { model: "text-multilingual-embedding-002", text: "animal summer nature bug beautiful" } })
+  emoji16: emoji_update(id: "e0000000-0000-0000-0000-000000000105", data: { descriptionEmbedding_embed: { model: "text-multilingual-embedding-002", text: "animal bird cold ice snow" } })
+  emoji17: emoji_update(id: "e0000000-0000-0000-0000-000000000106", data: { descriptionEmbedding_embed: { model: "text-multilingual-embedding-002", text: "animal cat wild king safari" } })
+  emoji18: emoji_update(id: "e0000000-0000-0000-0000-000000000107", data: { descriptionEmbedding_embed: { model: "text-multilingual-embedding-002", text: "animal dinosaur extinct scary teeth" } })
+  emoji19: emoji_update(id: "e0000000-0000-0000-0000-000000000108", data: { descriptionEmbedding_embed: { model: "text-multilingual-embedding-002", text: "animal ocean sea tentacles squid" } })
+  emoji20: emoji_update(id: "e0000000-0000-0000-0000-000000000011", data: { descriptionEmbedding_embed: { model: "text-multilingual-embedding-002", text: "nature wood green forest earth" } })
+  emoji21: emoji_update(id: "e0000000-0000-0000-0000-000000000012", data: { descriptionEmbedding_embed: { model: "text-multilingual-embedding-002", text: "nature summer flower yellow plant" } })
+  emoji22: emoji_update(id: "e0000000-0000-0000-0000-000000000013", data: { descriptionEmbedding_embed: { model: "text-multilingual-embedding-002", text: "nature summer weather hot sky" } })
+  emoji23: emoji_update(id: "e0000000-0000-0000-0000-00000000010c", data: { descriptionEmbedding_embed: { model: "text-multilingual-embedding-002", text: "nature hot flame burn lit" } })
+  emoji24: emoji_update(id: "e0000000-0000-0000-0000-00000000010d", data: { descriptionEmbedding_embed: { model: "text-multilingual-embedding-002", text: "nature ocean water surf sea" } })
+  emoji25: emoji_update(id: "e0000000-0000-0000-0000-00000000010e", data: { descriptionEmbedding_embed: { model: "text-multilingual-embedding-002", text: "space sky night bright yellow" } })
+
+  # Faces & Emotions
+  emoji26: emoji_update(id: "e0000000-0000-0000-0000-000000000003", data: { descriptionEmbedding_embed: { model: "text-multilingual-embedding-002", text: "sunglasses summer smile chill vibe" } })
+  emoji27: emoji_update(id: "e0000000-0000-0000-0000-00000000000e", data: { descriptionEmbedding_embed: { model: "text-multilingual-embedding-002", text: "face happy basic emotion joy" } })
+  emoji28: emoji_update(id: "e0000000-0000-0000-0000-00000000000f", data: { descriptionEmbedding_embed: { model: "text-multilingual-embedding-002", text: "face tears funny meme comedy" } })
+  emoji29: emoji_update(id: "e0000000-0000-0000-0000-000000000010", data: { descriptionEmbedding_embed: { model: "text-multilingual-embedding-002", text: "face sad sadge tears emotional" } })
+  emoji30: emoji_update(id: "e0000000-0000-0000-0000-000000000109", data: { descriptionEmbedding_embed: { model: "text-multilingual-embedding-002", text: "face shock crazy explosion wow" } })
+  emoji31: emoji_update(id: "e0000000-0000-0000-0000-00000000010a", data: { descriptionEmbedding_embed: { model: "text-multilingual-embedding-002", text: "face love crush beautiful like" } })
+  emoji32: emoji_update(id: "e0000000-0000-0000-0000-00000000010b", data: { descriptionEmbedding_embed: { model: "text-multilingual-embedding-002", text: "face silly joke circus fool" } })
+
+  # Sports & Activities
+  emoji33: emoji_update(id: "e0000000-0000-0000-0000-000000000014", data: { descriptionEmbedding_embed: { model: "text-multilingual-embedding-002", text: "sports kick game football team" } })
+  emoji34: emoji_update(id: "e0000000-0000-0000-0000-000000000015", data: { descriptionEmbedding_embed: { model: "text-multilingual-embedding-002", text: "sports hoops game court jump" } })
+  emoji35: emoji_update(id: "e0000000-0000-0000-0000-000000000016", data: { descriptionEmbedding_embed: { model: "text-multilingual-embedding-002", text: "sports summer rally court racket" } })
+  emoji36: emoji_update(id: "e0000000-0000-0000-0000-00000000010f", data: { descriptionEmbedding_embed: { model: "text-multilingual-embedding-002", text: "sports pool game magic luck" } })
+  emoji37: emoji_update(id: "e0000000-0000-0000-0000-000000000110", data: { descriptionEmbedding_embed: { model: "text-multilingual-embedding-002", text: "sports fight punch glove match" } })
+  emoji38: emoji_update(id: "e0000000-0000-0000-0000-000000000111", data: { descriptionEmbedding_embed: { model: "text-multilingual-embedding-002", text: "sports win award gold number one" } })
+
+  # Tech, Finance & Misc
+  emoji39: emoji_update(id: "e0000000-0000-0000-0000-000000000005", data: { descriptionEmbedding_embed: { model: "text-multilingual-embedding-002", text: "ship tech space crypto moon hype" } })
+  emoji40: emoji_update(id: "e0000000-0000-0000-0000-000000000017", data: { descriptionEmbedding_embed: { model: "text-multilingual-embedding-002", text: "tech laptop work internet code" } })
+  emoji41: emoji_update(id: "e0000000-0000-0000-0000-000000000018", data: { descriptionEmbedding_embed: { model: "text-multilingual-embedding-002", text: "tech mobile screen text app" } })
+  emoji42: emoji_update(id: "e0000000-0000-0000-0000-000000000112", data: { descriptionEmbedding_embed: { model: "text-multilingual-embedding-002", text: "tech energy power full charge" } })
+  emoji43: emoji_update(id: "e0000000-0000-0000-0000-000000000113", data: { descriptionEmbedding_embed: { model: "text-multilingual-embedding-002", text: "tech idea bright smart electricity" } })
+  emoji44: emoji_update(id: "e0000000-0000-0000-0000-000000000114", data: { descriptionEmbedding_embed: { model: "text-multilingual-embedding-002", text: "finance stonk graph money tech" } })
+  emoji45: emoji_update(id: "e0000000-0000-0000-0000-000000000115", data: { descriptionEmbedding_embed: { model: "text-multilingual-embedding-002", text: "finance wealth cash rich dollar" } })
+  emoji46: emoji_update(id: "e0000000-0000-0000-0000-000000000116", data: { descriptionEmbedding_embed: { model: "text-multilingual-embedding-002", text: "finance diamond rich jewel hands" } })
+  emoji47: emoji_update(id: "e0000000-0000-0000-0000-000000000117", data: { descriptionEmbedding_embed: { model: "text-multilingual-embedding-002", text: "vehicle fast speed drive f1" } })
+  emoji48: emoji_update(id: "e0000000-0000-0000-0000-000000000118", data: { descriptionEmbedding_embed: { model: "text-multilingual-embedding-002", text: "vehicle flight travel sky vacation" } })
+  emoji49: emoji_update(id: "e0000000-0000-0000-0000-000000000019", data: { descriptionEmbedding_embed: { model: "text-multilingual-embedding-002", text: "spooky scary halloween dead spirit" } })
+  emoji50: emoji_update(id: "e0000000-0000-0000-0000-000000000119", data: { descriptionEmbedding_embed: { model: "text-multilingual-embedding-002", text: "space ufo weird sci-fi extra" } })
+  emoji51: emoji_update(id: "e0000000-0000-0000-0000-00000000011a", data: { descriptionEmbedding_embed: { model: "text-multilingual-embedding-002", text: "tech ai future machine beep" } })
+}

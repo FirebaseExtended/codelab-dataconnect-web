@@ -71,6 +71,30 @@ export function marketMakerTrade(dcOrVars, vars) {
   return executeMutation(marketMakerTradeRef(dcInstance, inputVars));
 }
 
+export const buyStockRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'BuyStock', inputVars);
+}
+buyStockRef.operationName = 'BuyStock';
+
+export function buyStock(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(buyStockRef(dcInstance, inputVars));
+}
+
+export const sellStockRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'SellStock', inputVars);
+}
+sellStockRef.operationName = 'SellStock';
+
+export function sellStock(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(sellStockRef(dcInstance, inputVars));
+}
+
 export const getDashboardDataRef = (dc) => {
   const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
   dcInstance._useGeneratedSdk();
@@ -186,5 +210,31 @@ export function searchEmojis(dcOrVars, varsOrOptions, options) {
   
   const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrVars, varsOrOptions, options, true, false);
   return executeQuery(searchEmojisRef(dcInstance, inputVars), inputOpts && inputOpts.fetchPolicy);
+}
+
+export const getTopEmojisByCityRef = (dc) => {
+  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'GetTopEmojisByCity');
+}
+getTopEmojisByCityRef.operationName = 'GetTopEmojisByCity';
+
+export function getTopEmojisByCity(dcOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrOptions, options, undefined,false, false);
+  return executeQuery(getTopEmojisByCityRef(dcInstance, inputVars), inputOpts && inputOpts.fetchPolicy);
+}
+
+export const getTrendingEmojisNearMeRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'GetTrendingEmojisNearMe', inputVars);
+}
+getTrendingEmojisNearMeRef.operationName = 'GetTrendingEmojisNearMe';
+
+export function getTrendingEmojisNearMe(dcOrVars, varsOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
+  return executeQuery(getTrendingEmojisNearMeRef(dcInstance, inputVars), inputOpts && inputOpts.fetchPolicy);
 }
 

@@ -21,12 +21,12 @@ import { useTheme } from "next-themes";
 import { useInspector } from "../../lib/InspectorContext";
 import { useToast } from "@/lib/ToastContext";
 
-// import { subscribe } from "@firebase/data-connect";
-// import {
-//   getTopEmojisByCityRef,
-//   getTrendingEmojisNearMeRef,
-//   getUserProfileRef,
-// } from "@dataconnect/generated";
+import { subscribe } from "@firebase/data-connect";
+import {
+  getTopEmojisByCityRef,
+  getTrendingEmojisNearMeRef,
+  getUserProfileRef,
+} from "@dataconnect/generated";
 
 export default function InsightsPage() {
   const { logEvent, isOpen, logs } = useInspector();
@@ -57,17 +57,36 @@ export default function InsightsPage() {
   }, []);
 
   useEffect(() => {
-    // TODO: Subscribe to realtime updates for the authenticated user's profile (getUserProfileRef)
+    // Subscribe to realtime updates for the authenticated user's profile and stock ownership
+    const unsub = subscribe(getUserProfileRef(), (res) => {
+      if (res.data) setProfileData(res.data);
+    });
+    return () => unsub();
   }, []);
 
   useEffect(() => {
-    // TODO: Subscribe to realtime updates for top trending emojis partitioned by user city (getTopEmojisByCityRef)
+    // Subscribe to realtime updates for top trending emojis partitioned by user city
+    const unsub = subscribe(getTopEmojisByCityRef(), (res) => {
+      if (res.data) setCityData(res.data);
+    });
+    return () => unsub();
   }, []);
 
   useEffect(() => {
     setRadarLoading(true);
-    // TODO: Subscribe to realtime updates for trending emojis within a specified geographic radius (getTrendingEmojisNearMeRef)
-    setRadarLoading(false);
+    // Subscribe to realtime updates for trending emojis within a specified geographic radius
+    const unsub = subscribe(
+      getTrendingEmojisNearMeRef({
+        userLat: coords.lat,
+        userLng: coords.lng,
+        radiusMeters: radiusKm * 1000,
+      }),
+      (res) => {
+        if (res.data) setRadarData(res.data);
+        setRadarLoading(false);
+      },
+    );
+    return () => unsub();
   }, [coords.lat, coords.lng, radiusKm]);
 
   useEffect(() => {

@@ -177,20 +177,77 @@ query SearchEmojis($query: String)
 }
 
 # Get top trending emojis partitioned by user city using native SQL
-# query GetTopEmojisByCity
-# @auth(level: PUBLIC, insecureReason: "This operation is safe to expose to the public.")
-# # TODO: Add @refresh directives
-# {
-#   # TODO: Query cityTrends using _select native SQL
-# }
+query GetTopEmojisByCity
+@auth(
+  level: PUBLIC
+  insecureReason: "This operation is safe to expose to the public."
+) {
+  cityTrends: _select(
+    sql: """
+    WITH city_shares AS (
+      SELECT
+        u.city,
+        AVG(u.latitude) as latitude,
+        AVG(u.longitude) as longitude,
+        e.id as emoji_id,
+        e.symbol,
+        e.name,
+        SUM(so.shares) as total_shares,
+        RANK() OVER (PARTITION BY u.city ORDER BY SUM(so.shares) DESC) as rank
+      FROM stock_ownership so
+      JOIN "user" u ON so.user_id = u.id
+      JOIN emoji e ON so.emoji_id = e.id
+      WHERE u.city IS NOT NULL AND u.latitude IS NOT NULL AND so.shares > 0
+      GROUP BY u.city, e.id, e.symbol, e.name
+    )
+    SELECT city, latitude, longitude, emoji_id, symbol, name, total_shares
+    FROM city_shares
+    WHERE rank = 1
+    ORDER BY city ASC
+    """
+    params: []
+  )
+}
 
 # Get trending emojis within a geographic radius using native SQL and PostGIS extenstion
-# query GetTrendingEmojisNearMe($userLng: Float!, $userLat: Float!, $radiusMeters: Float!)
-# @auth(level: PUBLIC, insecureReason: "This operation is safe to expose to the public.")
-# # TODO: Add @refresh directives
-# {
-#   # TODO: Query regionalTrends using _select native SQL with PostGIS
-# }
+query GetTrendingEmojisNearMe(
+  $userLng: Float!
+  $userLat: Float!
+  $radiusMeters: Float!
+)
+@auth(
+  level: PUBLIC
+  insecureReason: "This operation is safe to expose to the public."
+) {
+  regionalTrends: _select(
+    sql: """
+    SELECT
+      e.id,
+      e.symbol,
+      e.name,
+      e.current_price,
+      e.trend,
+      COUNT(so.shares)   AS regional_holders,
+      SUM(so.shares)     AS regional_shares
+    FROM emoji e
+    JOIN stock_ownership so ON so.emoji_id = e.id
+    JOIN "user" u            ON u.id = so.user_id
+    WHERE u.latitude  IS NOT NULL
+      AND u.longitude IS NOT NULL
+      AND so.shares > 0
+      AND ST_DWithin(
+        ST_MakePoint(u.longitude, u.latitude)::geography,
+        ST_MakePoint($1, $2)::geography,
+        $3
+      )
+    GROUP BY e.id, e.symbol, e.name, e.current_price, e.trend
+    ORDER BY regional_shares DESC
+    LIMIT 10
+    """
+    params: [$userLng, $userLat, $radiusMeters]
+  )
+}
+
 
 # Search emoji descriptions using Vertex AI embeddings
 # query VectorSearchEmojis($query: String!)

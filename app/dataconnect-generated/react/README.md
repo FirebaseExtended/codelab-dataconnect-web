@@ -26,12 +26,16 @@ You can also follow the instructions from the [Data Connect documentation](https
   - [*GetChronologicalTicker*](#getchronologicalticker)
   - [*GetEmojiSparklines*](#getemojisparklines)
   - [*SearchEmojis*](#searchemojis)
+  - [*GetTopEmojisByCity*](#gettopemojisbycity)
+  - [*GetTrendingEmojisNearMe*](#gettrendingemojisnearme)
 - [**Mutations**](#mutations)
   - [*UpsertUser*](#upsertuser)
   - [*UpdateUserRole*](#updateuserrole)
   - [*UpdateUserLocation*](#updateuserlocation)
   - [*TriggerEvent*](#triggerevent)
   - [*MarketMakerTrade*](#marketmakertrade)
+  - [*BuyStock*](#buystock)
+  - [*SellStock*](#sellstock)
 
 # TanStack Query Firebase & TanStack React Query
 This SDK provides [React](https://react.dev/) hooks generated specific to your application, for the operations found in the connector `friendly-exchange`. These hooks are generated using [TanStack Query Firebase](https://react-query-firebase.invertase.dev/) by our partners at Invertase, a library built on top of [TanStack React Query v5](https://tanstack.com/query/v5/docs/framework/react/overview).
@@ -868,6 +872,161 @@ export default function SearchEmojisComponent() {
 }
 ```
 
+## GetTopEmojisByCity
+You can execute the `GetTopEmojisByCity` Query using the following Query hook function, which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts):
+
+```javascript
+useGetTopEmojisByCity(dc: DataConnect, options?: useDataConnectQueryOptions<GetTopEmojisByCityData>): UseDataConnectQueryResult<GetTopEmojisByCityData, undefined>;
+```
+You can also pass in a `DataConnect` instance to the Query hook function.
+```javascript
+useGetTopEmojisByCity(options?: useDataConnectQueryOptions<GetTopEmojisByCityData>): UseDataConnectQueryResult<GetTopEmojisByCityData, undefined>;
+```
+
+### Variables
+The `GetTopEmojisByCity` Query has no variables.
+### Return Type
+Recall that calling the `GetTopEmojisByCity` Query hook function returns a `UseQueryResult` object. This object holds the state of your Query, including whether the Query is loading, has completed, or has succeeded/failed, and any data returned by the Query, among other things.
+
+To check the status of a Query, use the `UseQueryResult.status` field. You can also check for pending / success / error status using the `UseQueryResult.isPending`, `UseQueryResult.isSuccess`, and `UseQueryResult.isError` fields.
+
+To access the data returned by a Query, use the `UseQueryResult.data` field. The data for the `GetTopEmojisByCity` Query is of type `GetTopEmojisByCityData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+```javascript
+export interface GetTopEmojisByCityData {
+  cityTrends?: unknown[] | null;
+}
+```
+
+To learn more about the `UseQueryResult` object, see the [TanStack React Query documentation](https://tanstack.com/query/v5/docs/framework/react/reference/useQuery).
+
+### Using `GetTopEmojisByCity`'s Query hook function
+
+```javascript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig } from '@dataconnect/generated';
+import { useGetTopEmojisByCity } from '@dataconnect/generated/react'
+
+export default function GetTopEmojisByCityComponent() {
+  // You don't have to do anything to "execute" the Query.
+  // Call the Query hook function to get a `UseQueryResult` object which holds the state of your Query.
+  const query = useGetTopEmojisByCity();
+
+  // You can also pass in a `DataConnect` instance to the Query hook function.
+  const dataConnect = getDataConnect(connectorConfig);
+  const query = useGetTopEmojisByCity(dataConnect);
+
+  // You can also pass in a `useDataConnectQueryOptions` object to the Query hook function.
+  const options = { staleTime: 5 * 1000 };
+  const query = useGetTopEmojisByCity(options);
+
+  // You can also pass both a `DataConnect` instance and a `useDataConnectQueryOptions` object.
+  const dataConnect = getDataConnect(connectorConfig);
+  const options = { staleTime: 5 * 1000 };
+  const query = useGetTopEmojisByCity(dataConnect, options);
+
+  // Then, you can render your component dynamically based on the status of the Query.
+  if (query.isPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (query.isError) {
+    return <div>Error: {query.error.message}</div>;
+  }
+
+  // If the Query is successful, you can access the data returned using the `UseQueryResult.data` field.
+  if (query.isSuccess) {
+    console.log(query.data.cityTrends);
+  }
+  return <div>Query execution {query.isSuccess ? 'successful' : 'failed'}!</div>;
+}
+```
+
+## GetTrendingEmojisNearMe
+You can execute the `GetTrendingEmojisNearMe` Query using the following Query hook function, which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts):
+
+```javascript
+useGetTrendingEmojisNearMe(dc: DataConnect, vars: GetTrendingEmojisNearMeVariables, options?: useDataConnectQueryOptions<GetTrendingEmojisNearMeData>): UseDataConnectQueryResult<GetTrendingEmojisNearMeData, GetTrendingEmojisNearMeVariables>;
+```
+You can also pass in a `DataConnect` instance to the Query hook function.
+```javascript
+useGetTrendingEmojisNearMe(vars: GetTrendingEmojisNearMeVariables, options?: useDataConnectQueryOptions<GetTrendingEmojisNearMeData>): UseDataConnectQueryResult<GetTrendingEmojisNearMeData, GetTrendingEmojisNearMeVariables>;
+```
+
+### Variables
+The `GetTrendingEmojisNearMe` Query requires an argument of type `GetTrendingEmojisNearMeVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+
+```javascript
+export interface GetTrendingEmojisNearMeVariables {
+  userLng: number;
+  userLat: number;
+  radiusMeters: number;
+}
+```
+### Return Type
+Recall that calling the `GetTrendingEmojisNearMe` Query hook function returns a `UseQueryResult` object. This object holds the state of your Query, including whether the Query is loading, has completed, or has succeeded/failed, and any data returned by the Query, among other things.
+
+To check the status of a Query, use the `UseQueryResult.status` field. You can also check for pending / success / error status using the `UseQueryResult.isPending`, `UseQueryResult.isSuccess`, and `UseQueryResult.isError` fields.
+
+To access the data returned by a Query, use the `UseQueryResult.data` field. The data for the `GetTrendingEmojisNearMe` Query is of type `GetTrendingEmojisNearMeData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+```javascript
+export interface GetTrendingEmojisNearMeData {
+  regionalTrends?: unknown[] | null;
+}
+```
+
+To learn more about the `UseQueryResult` object, see the [TanStack React Query documentation](https://tanstack.com/query/v5/docs/framework/react/reference/useQuery).
+
+### Using `GetTrendingEmojisNearMe`'s Query hook function
+
+```javascript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, GetTrendingEmojisNearMeVariables } from '@dataconnect/generated';
+import { useGetTrendingEmojisNearMe } from '@dataconnect/generated/react'
+
+export default function GetTrendingEmojisNearMeComponent() {
+  // The `useGetTrendingEmojisNearMe` Query hook requires an argument of type `GetTrendingEmojisNearMeVariables`:
+  const getTrendingEmojisNearMeVars: GetTrendingEmojisNearMeVariables = {
+    userLng: ..., 
+    userLat: ..., 
+    radiusMeters: ..., 
+  };
+
+  // You don't have to do anything to "execute" the Query.
+  // Call the Query hook function to get a `UseQueryResult` object which holds the state of your Query.
+  const query = useGetTrendingEmojisNearMe(getTrendingEmojisNearMeVars);
+  // Variables can be defined inline as well.
+  const query = useGetTrendingEmojisNearMe({ userLng: ..., userLat: ..., radiusMeters: ..., });
+
+  // You can also pass in a `DataConnect` instance to the Query hook function.
+  const dataConnect = getDataConnect(connectorConfig);
+  const query = useGetTrendingEmojisNearMe(dataConnect, getTrendingEmojisNearMeVars);
+
+  // You can also pass in a `useDataConnectQueryOptions` object to the Query hook function.
+  const options = { staleTime: 5 * 1000 };
+  const query = useGetTrendingEmojisNearMe(getTrendingEmojisNearMeVars, options);
+
+  // You can also pass both a `DataConnect` instance and a `useDataConnectQueryOptions` object.
+  const dataConnect = getDataConnect(connectorConfig);
+  const options = { staleTime: 5 * 1000 };
+  const query = useGetTrendingEmojisNearMe(dataConnect, getTrendingEmojisNearMeVars, options);
+
+  // Then, you can render your component dynamically based on the status of the Query.
+  if (query.isPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (query.isError) {
+    return <div>Error: {query.error.message}</div>;
+  }
+
+  // If the Query is successful, you can access the data returned using the `UseQueryResult.data` field.
+  if (query.isSuccess) {
+    console.log(query.data.regionalTrends);
+  }
+  return <div>Query execution {query.isSuccess ? 'successful' : 'failed'}!</div>;
+}
+```
+
 # Mutations
 
 The React generated SDK provides Mutations hook functions that call and return [`useDataConnectMutation`](https://react-query-firebase.invertase.dev/react/data-connect/mutations) hooks from TanStack Query Firebase.
@@ -1384,6 +1543,200 @@ export default function MarketMakerTradeComponent() {
     console.log(mutation.data.emoji_update);
     console.log(mutation.data.event_insert);
     console.log(mutation.data.priceHistory_insert);
+  }
+  return <div>Mutation execution {mutation.isSuccess ? 'successful' : 'failed'}!</div>;
+}
+```
+
+## BuyStock
+You can execute the `BuyStock` Mutation using the `UseMutationResult` object returned by the following Mutation hook function (which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts)):
+```javascript
+useBuyStock(options?: useDataConnectMutationOptions<BuyStockData, FirebaseError, BuyStockVariables>): UseDataConnectMutationResult<BuyStockData, BuyStockVariables>;
+```
+You can also pass in a `DataConnect` instance to the Mutation hook function.
+```javascript
+useBuyStock(dc: DataConnect, options?: useDataConnectMutationOptions<BuyStockData, FirebaseError, BuyStockVariables>): UseDataConnectMutationResult<BuyStockData, BuyStockVariables>;
+```
+
+### Variables
+The `BuyStock` Mutation requires an argument of type `BuyStockVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+
+```javascript
+export interface BuyStockVariables {
+  emojiId: UUIDString;
+  amount: number;
+  isDiscounted: boolean;
+}
+```
+### Return Type
+Recall that calling the `BuyStock` Mutation hook function returns a `UseMutationResult` object. This object holds the state of your Mutation, including whether the Mutation is loading, has completed, or has succeeded/failed, among other things.
+
+To check the status of a Mutation, use the `UseMutationResult.status` field. You can also check for pending / success / error status using the `UseMutationResult.isPending`, `UseMutationResult.isSuccess`, and `UseMutationResult.isError` fields.
+
+To execute the Mutation, call `UseMutationResult.mutate()`. This function executes the Mutation, but does not return the data from the Mutation.
+
+To access the data returned by a Mutation, use the `UseMutationResult.data` field. The data for the `BuyStock` Mutation is of type `BuyStockData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+```javascript
+export interface BuyStockData {
+  buyStock?: number | null;
+}
+```
+
+To learn more about the `UseMutationResult` object, see the [TanStack React Query documentation](https://tanstack.com/query/v5/docs/framework/react/reference/useMutation).
+
+### Using `BuyStock`'s Mutation hook function
+
+```javascript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, BuyStockVariables } from '@dataconnect/generated';
+import { useBuyStock } from '@dataconnect/generated/react'
+
+export default function BuyStockComponent() {
+  // Call the Mutation hook function to get a `UseMutationResult` object which holds the state of your Mutation.
+  const mutation = useBuyStock();
+
+  // You can also pass in a `DataConnect` instance to the Mutation hook function.
+  const dataConnect = getDataConnect(connectorConfig);
+  const mutation = useBuyStock(dataConnect);
+
+  // You can also pass in a `useDataConnectMutationOptions` object to the Mutation hook function.
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  const mutation = useBuyStock(options);
+
+  // You can also pass both a `DataConnect` instance and a `useDataConnectMutationOptions` object.
+  const dataConnect = getDataConnect(connectorConfig);
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  const mutation = useBuyStock(dataConnect, options);
+
+  // After calling the Mutation hook function, you must call `UseMutationResult.mutate()` to execute the Mutation.
+  // The `useBuyStock` Mutation requires an argument of type `BuyStockVariables`:
+  const buyStockVars: BuyStockVariables = {
+    emojiId: ..., 
+    amount: ..., 
+    isDiscounted: ..., 
+  };
+  mutation.mutate(buyStockVars);
+  // Variables can be defined inline as well.
+  mutation.mutate({ emojiId: ..., amount: ..., isDiscounted: ..., });
+
+  // You can also pass in a `useDataConnectMutationOptions` object to `UseMutationResult.mutate()`.
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  mutation.mutate(buyStockVars, options);
+
+  // Then, you can render your component dynamically based on the status of the Mutation.
+  if (mutation.isPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (mutation.isError) {
+    return <div>Error: {mutation.error.message}</div>;
+  }
+
+  // If the Mutation is successful, you can access the data returned using the `UseMutationResult.data` field.
+  if (mutation.isSuccess) {
+    console.log(mutation.data.buyStock);
+  }
+  return <div>Mutation execution {mutation.isSuccess ? 'successful' : 'failed'}!</div>;
+}
+```
+
+## SellStock
+You can execute the `SellStock` Mutation using the `UseMutationResult` object returned by the following Mutation hook function (which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts)):
+```javascript
+useSellStock(options?: useDataConnectMutationOptions<SellStockData, FirebaseError, SellStockVariables>): UseDataConnectMutationResult<SellStockData, SellStockVariables>;
+```
+You can also pass in a `DataConnect` instance to the Mutation hook function.
+```javascript
+useSellStock(dc: DataConnect, options?: useDataConnectMutationOptions<SellStockData, FirebaseError, SellStockVariables>): UseDataConnectMutationResult<SellStockData, SellStockVariables>;
+```
+
+### Variables
+The `SellStock` Mutation requires an argument of type `SellStockVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+
+```javascript
+export interface SellStockVariables {
+  emojiId: UUIDString;
+  amount: number;
+}
+```
+### Return Type
+Recall that calling the `SellStock` Mutation hook function returns a `UseMutationResult` object. This object holds the state of your Mutation, including whether the Mutation is loading, has completed, or has succeeded/failed, among other things.
+
+To check the status of a Mutation, use the `UseMutationResult.status` field. You can also check for pending / success / error status using the `UseMutationResult.isPending`, `UseMutationResult.isSuccess`, and `UseMutationResult.isError` fields.
+
+To execute the Mutation, call `UseMutationResult.mutate()`. This function executes the Mutation, but does not return the data from the Mutation.
+
+To access the data returned by a Mutation, use the `UseMutationResult.data` field. The data for the `SellStock` Mutation is of type `SellStockData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+```javascript
+export interface SellStockData {
+  sellStock?: number | null;
+}
+```
+
+To learn more about the `UseMutationResult` object, see the [TanStack React Query documentation](https://tanstack.com/query/v5/docs/framework/react/reference/useMutation).
+
+### Using `SellStock`'s Mutation hook function
+
+```javascript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, SellStockVariables } from '@dataconnect/generated';
+import { useSellStock } from '@dataconnect/generated/react'
+
+export default function SellStockComponent() {
+  // Call the Mutation hook function to get a `UseMutationResult` object which holds the state of your Mutation.
+  const mutation = useSellStock();
+
+  // You can also pass in a `DataConnect` instance to the Mutation hook function.
+  const dataConnect = getDataConnect(connectorConfig);
+  const mutation = useSellStock(dataConnect);
+
+  // You can also pass in a `useDataConnectMutationOptions` object to the Mutation hook function.
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  const mutation = useSellStock(options);
+
+  // You can also pass both a `DataConnect` instance and a `useDataConnectMutationOptions` object.
+  const dataConnect = getDataConnect(connectorConfig);
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  const mutation = useSellStock(dataConnect, options);
+
+  // After calling the Mutation hook function, you must call `UseMutationResult.mutate()` to execute the Mutation.
+  // The `useSellStock` Mutation requires an argument of type `SellStockVariables`:
+  const sellStockVars: SellStockVariables = {
+    emojiId: ..., 
+    amount: ..., 
+  };
+  mutation.mutate(sellStockVars);
+  // Variables can be defined inline as well.
+  mutation.mutate({ emojiId: ..., amount: ..., });
+
+  // You can also pass in a `useDataConnectMutationOptions` object to `UseMutationResult.mutate()`.
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  mutation.mutate(sellStockVars, options);
+
+  // Then, you can render your component dynamically based on the status of the Mutation.
+  if (mutation.isPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (mutation.isError) {
+    return <div>Error: {mutation.error.message}</div>;
+  }
+
+  // If the Mutation is successful, you can access the data returned using the `UseMutationResult.data` field.
+  if (mutation.isSuccess) {
+    console.log(mutation.data.sellStock);
   }
   return <div>Mutation execution {mutation.isSuccess ? 'successful' : 'failed'}!</div>;
 }

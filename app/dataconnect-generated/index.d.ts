@@ -11,6 +11,16 @@ export type DateString = string;
 
 
 
+export interface BuyStockData {
+  buyStock?: number | null;
+}
+
+export interface BuyStockVariables {
+  emojiId: UUIDString;
+  amount: number;
+  isDiscounted: boolean;
+}
+
 export interface Emoji_Key {
   id: UUIDString;
   __typename?: 'Emoji_Key';
@@ -100,6 +110,10 @@ export interface GetPriceHistoryVariables {
   limit?: number | null;
 }
 
+export interface GetTopEmojisByCityData {
+  cityTrends?: unknown[] | null;
+}
+
 export interface GetTopTradersData {
   topTraders: ({
     id?: string | null;
@@ -108,6 +122,16 @@ export interface GetTopTradersData {
     netWorth?: number | null;
     rank?: number | null;
   })[];
+}
+
+export interface GetTrendingEmojisNearMeData {
+  regionalTrends?: unknown[] | null;
+}
+
+export interface GetTrendingEmojisNearMeVariables {
+  userLng: number;
+  userLat: number;
+  radiusMeters: number;
 }
 
 export interface GetUserProfileData {
@@ -164,6 +188,15 @@ export interface SearchEmojisData {
 
 export interface SearchEmojisVariables {
   query?: string | null;
+}
+
+export interface SellStockData {
+  sellStock?: number | null;
+}
+
+export interface SellStockVariables {
+  emojiId: UUIDString;
+  amount: number;
 }
 
 export interface StockOwnership_Key {
@@ -275,6 +308,30 @@ export const marketMakerTradeRef: MarketMakerTradeRef;
 export function marketMakerTrade(vars: MarketMakerTradeVariables): MutationPromise<MarketMakerTradeData, MarketMakerTradeVariables>;
 export function marketMakerTrade(dc: DataConnect, vars: MarketMakerTradeVariables): MutationPromise<MarketMakerTradeData, MarketMakerTradeVariables>;
 
+interface BuyStockRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: BuyStockVariables): MutationRef<BuyStockData, BuyStockVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: BuyStockVariables): MutationRef<BuyStockData, BuyStockVariables>;
+  operationName: string;
+}
+export const buyStockRef: BuyStockRef;
+
+export function buyStock(vars: BuyStockVariables): MutationPromise<BuyStockData, BuyStockVariables>;
+export function buyStock(dc: DataConnect, vars: BuyStockVariables): MutationPromise<BuyStockData, BuyStockVariables>;
+
+interface SellStockRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: SellStockVariables): MutationRef<SellStockData, SellStockVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: SellStockVariables): MutationRef<SellStockData, SellStockVariables>;
+  operationName: string;
+}
+export const sellStockRef: SellStockRef;
+
+export function sellStock(vars: SellStockVariables): MutationPromise<SellStockData, SellStockVariables>;
+export function sellStock(dc: DataConnect, vars: SellStockVariables): MutationPromise<SellStockData, SellStockVariables>;
+
 interface GetDashboardDataRef {
   /* Allow users to create refs without passing in DataConnect */
   (): QueryRef<GetDashboardDataData, undefined>;
@@ -382,4 +439,28 @@ export const searchEmojisRef: SearchEmojisRef;
 
 export function searchEmojis(vars?: SearchEmojisVariables, options?: ExecuteQueryOptions): QueryPromise<SearchEmojisData, SearchEmojisVariables>;
 export function searchEmojis(dc: DataConnect, vars?: SearchEmojisVariables, options?: ExecuteQueryOptions): QueryPromise<SearchEmojisData, SearchEmojisVariables>;
+
+interface GetTopEmojisByCityRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<GetTopEmojisByCityData, undefined>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect): QueryRef<GetTopEmojisByCityData, undefined>;
+  operationName: string;
+}
+export const getTopEmojisByCityRef: GetTopEmojisByCityRef;
+
+export function getTopEmojisByCity(options?: ExecuteQueryOptions): QueryPromise<GetTopEmojisByCityData, undefined>;
+export function getTopEmojisByCity(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<GetTopEmojisByCityData, undefined>;
+
+interface GetTrendingEmojisNearMeRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: GetTrendingEmojisNearMeVariables): QueryRef<GetTrendingEmojisNearMeData, GetTrendingEmojisNearMeVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: GetTrendingEmojisNearMeVariables): QueryRef<GetTrendingEmojisNearMeData, GetTrendingEmojisNearMeVariables>;
+  operationName: string;
+}
+export const getTrendingEmojisNearMeRef: GetTrendingEmojisNearMeRef;
+
+export function getTrendingEmojisNearMe(vars: GetTrendingEmojisNearMeVariables, options?: ExecuteQueryOptions): QueryPromise<GetTrendingEmojisNearMeData, GetTrendingEmojisNearMeVariables>;
+export function getTrendingEmojisNearMe(dc: DataConnect, vars: GetTrendingEmojisNearMeVariables, options?: ExecuteQueryOptions): QueryPromise<GetTrendingEmojisNearMeData, GetTrendingEmojisNearMeVariables>;
 

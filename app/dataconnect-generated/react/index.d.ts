@@ -1,4 +1,4 @@
-import { UpsertUserData, UpsertUserVariables, UpdateUserRoleData, UpdateUserRoleVariables, UpdateUserLocationData, UpdateUserLocationVariables, TriggerEventData, TriggerEventVariables, MarketMakerTradeData, MarketMakerTradeVariables, GetDashboardDataData, GetUserProfileData, GetPriceHistoryData, GetPriceHistoryVariables, GetEmojiWhaleStatsData, GetEmojiHistoryStatsData, GetEmojiHistoryStatsVariables, GetTopTradersData, GetChronologicalTickerData, GetEmojiSparklinesData, SearchEmojisData, SearchEmojisVariables } from '../';
+import { UpsertUserData, UpsertUserVariables, UpdateUserRoleData, UpdateUserRoleVariables, UpdateUserLocationData, UpdateUserLocationVariables, TriggerEventData, TriggerEventVariables, MarketMakerTradeData, MarketMakerTradeVariables, BuyStockData, BuyStockVariables, SellStockData, SellStockVariables, GetDashboardDataData, GetUserProfileData, GetPriceHistoryData, GetPriceHistoryVariables, GetEmojiWhaleStatsData, GetEmojiHistoryStatsData, GetEmojiHistoryStatsVariables, GetTopTradersData, GetChronologicalTickerData, GetEmojiSparklinesData, SearchEmojisData, SearchEmojisVariables, GetTopEmojisByCityData, GetTrendingEmojisNearMeData, GetTrendingEmojisNearMeVariables } from '../';
 import { UseDataConnectQueryResult, useDataConnectQueryOptions, UseDataConnectMutationResult, useDataConnectMutationOptions} from '@tanstack-query-firebase/react/data-connect';
 import { UseQueryResult, UseMutationResult} from '@tanstack/react-query';
 import { DataConnect } from 'firebase/data-connect';
@@ -19,6 +19,12 @@ export function useTriggerEvent(dc: DataConnect, options?: useDataConnectMutatio
 
 export function useMarketMakerTrade(options?: useDataConnectMutationOptions<MarketMakerTradeData, FirebaseError, MarketMakerTradeVariables>): UseDataConnectMutationResult<MarketMakerTradeData, MarketMakerTradeVariables>;
 export function useMarketMakerTrade(dc: DataConnect, options?: useDataConnectMutationOptions<MarketMakerTradeData, FirebaseError, MarketMakerTradeVariables>): UseDataConnectMutationResult<MarketMakerTradeData, MarketMakerTradeVariables>;
+
+export function useBuyStock(options?: useDataConnectMutationOptions<BuyStockData, FirebaseError, BuyStockVariables>): UseDataConnectMutationResult<BuyStockData, BuyStockVariables>;
+export function useBuyStock(dc: DataConnect, options?: useDataConnectMutationOptions<BuyStockData, FirebaseError, BuyStockVariables>): UseDataConnectMutationResult<BuyStockData, BuyStockVariables>;
+
+export function useSellStock(options?: useDataConnectMutationOptions<SellStockData, FirebaseError, SellStockVariables>): UseDataConnectMutationResult<SellStockData, SellStockVariables>;
+export function useSellStock(dc: DataConnect, options?: useDataConnectMutationOptions<SellStockData, FirebaseError, SellStockVariables>): UseDataConnectMutationResult<SellStockData, SellStockVariables>;
 
 export function useGetDashboardData(options?: useDataConnectQueryOptions<GetDashboardDataData>): UseDataConnectQueryResult<GetDashboardDataData, undefined>;
 export function useGetDashboardData(dc: DataConnect, options?: useDataConnectQueryOptions<GetDashboardDataData>): UseDataConnectQueryResult<GetDashboardDataData, undefined>;
@@ -46,3 +52,9 @@ export function useGetEmojiSparklines(dc: DataConnect, options?: useDataConnectQ
 
 export function useSearchEmojis(vars?: SearchEmojisVariables, options?: useDataConnectQueryOptions<SearchEmojisData>): UseDataConnectQueryResult<SearchEmojisData, SearchEmojisVariables>;
 export function useSearchEmojis(dc: DataConnect, vars?: SearchEmojisVariables, options?: useDataConnectQueryOptions<SearchEmojisData>): UseDataConnectQueryResult<SearchEmojisData, SearchEmojisVariables>;
+
+export function useGetTopEmojisByCity(options?: useDataConnectQueryOptions<GetTopEmojisByCityData>): UseDataConnectQueryResult<GetTopEmojisByCityData, undefined>;
+export function useGetTopEmojisByCity(dc: DataConnect, options?: useDataConnectQueryOptions<GetTopEmojisByCityData>): UseDataConnectQueryResult<GetTopEmojisByCityData, undefined>;
+
+export function useGetTrendingEmojisNearMe(vars: GetTrendingEmojisNearMeVariables, options?: useDataConnectQueryOptions<GetTrendingEmojisNearMeData>): UseDataConnectQueryResult<GetTrendingEmojisNearMeData, GetTrendingEmojisNearMeVariables>;
+export function useGetTrendingEmojisNearMe(dc: DataConnect, vars: GetTrendingEmojisNearMeVariables, options?: useDataConnectQueryOptions<GetTrendingEmojisNearMeData>): UseDataConnectQueryResult<GetTrendingEmojisNearMeData, GetTrendingEmojisNearMeVariables>;

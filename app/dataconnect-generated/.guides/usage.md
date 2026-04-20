@@ -12,7 +12,7 @@ For each operation, there is a wrapper hook that can be used to call the operati
 
 Here are all of the hooks that get generated:
 ```ts
-import { useUpsertUser, useUpdateUserRole, useUpdateUserLocation, useTriggerEvent, useMarketMakerTrade, useGetDashboardData, useGetUserProfile, useGetPriceHistory, useGetEmojiWhaleStats, useGetEmojiHistoryStats } from '@dataconnect/generated/react';
+import { useUpsertUser, useUpdateUserRole, useUpdateUserLocation, useTriggerEvent, useMarketMakerTrade, useBuyStock, useSellStock, useGetDashboardData, useGetUserProfile, useGetPriceHistory } from '@dataconnect/generated/react';
 // The types of these hooks are available in react/index.d.ts
 
 const { data, isPending, isSuccess, isError, error } = useUpsertUser(upsertUserVars);
@@ -25,15 +25,15 @@ const { data, isPending, isSuccess, isError, error } = useTriggerEvent(triggerEv
 
 const { data, isPending, isSuccess, isError, error } = useMarketMakerTrade(marketMakerTradeVars);
 
+const { data, isPending, isSuccess, isError, error } = useBuyStock(buyStockVars);
+
+const { data, isPending, isSuccess, isError, error } = useSellStock(sellStockVars);
+
 const { data, isPending, isSuccess, isError, error } = useGetDashboardData();
 
 const { data, isPending, isSuccess, isError, error } = useGetUserProfile();
 
 const { data, isPending, isSuccess, isError, error } = useGetPriceHistory(getPriceHistoryVars);
-
-const { data, isPending, isSuccess, isError, error } = useGetEmojiWhaleStats();
-
-const { data, isPending, isSuccess, isError, error } = useGetEmojiHistoryStats(getEmojiHistoryStatsVars);
 
 ```
 
@@ -72,7 +72,7 @@ If a user is not using a supported framework, they can use the generated SDK dir
 Here's an example of how to use it with the first 5 operations:
 
 ```js
-import { upsertUser, updateUserRole, updateUserLocation, triggerEvent, marketMakerTrade, getDashboardData, getUserProfile, getPriceHistory, getEmojiWhaleStats, getEmojiHistoryStats } from '@dataconnect/generated';
+import { upsertUser, updateUserRole, updateUserLocation, triggerEvent, marketMakerTrade, buyStock, sellStock, getDashboardData, getUserProfile, getPriceHistory } from '@dataconnect/generated';
 
 
 // Operation UpsertUser:  For variables, look at type UpsertUserVars in ../index.d.ts
@@ -90,6 +90,12 @@ const { data } = await TriggerEvent(dataConnect, triggerEventVars);
 // Operation MarketMakerTrade:  For variables, look at type MarketMakerTradeVars in ../index.d.ts
 const { data } = await MarketMakerTrade(dataConnect, marketMakerTradeVars);
 
+// Operation BuyStock:  For variables, look at type BuyStockVars in ../index.d.ts
+const { data } = await BuyStock(dataConnect, buyStockVars);
+
+// Operation SellStock:  For variables, look at type SellStockVars in ../index.d.ts
+const { data } = await SellStock(dataConnect, sellStockVars);
+
 // Operation GetDashboardData: 
 const { data } = await GetDashboardData(dataConnect);
 
@@ -98,12 +104,6 @@ const { data } = await GetUserProfile(dataConnect);
 
 // Operation GetPriceHistory:  For variables, look at type GetPriceHistoryVars in ../index.d.ts
 const { data } = await GetPriceHistory(dataConnect, getPriceHistoryVars);
-
-// Operation GetEmojiWhaleStats: 
-const { data } = await GetEmojiWhaleStats(dataConnect);
-
-// Operation GetEmojiHistoryStats:  For variables, look at type GetEmojiHistoryStatsVars in ../index.d.ts
-const { data } = await GetEmojiHistoryStats(dataConnect, getEmojiHistoryStatsVars);
 
 
 ```

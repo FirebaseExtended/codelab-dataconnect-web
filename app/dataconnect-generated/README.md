@@ -19,12 +19,16 @@ This README will guide you through the process of using the generated JavaScript
   - [*GetChronologicalTicker*](#getchronologicalticker)
   - [*GetEmojiSparklines*](#getemojisparklines)
   - [*SearchEmojis*](#searchemojis)
+  - [*GetTopEmojisByCity*](#gettopemojisbycity)
+  - [*GetTrendingEmojisNearMe*](#gettrendingemojisnearme)
 - [**Mutations**](#mutations)
   - [*UpsertUser*](#upsertuser)
   - [*UpdateUserRole*](#updateuserrole)
   - [*UpdateUserLocation*](#updateuserlocation)
   - [*TriggerEvent*](#triggerevent)
   - [*MarketMakerTrade*](#marketmakertrade)
+  - [*BuyStock*](#buystock)
+  - [*SellStock*](#sellstock)
 
 # Accessing the connector
 A connector is a collection of Queries and Mutations. One SDK is generated for each connector - this SDK is generated for the connector `friendly-exchange`. You can find more information about connectors in the [Data Connect documentation](https://firebase.google.com/docs/data-connect#how-does).
@@ -1031,6 +1035,212 @@ executeQuery(ref).then((response) => {
 });
 ```
 
+## GetTopEmojisByCity
+You can execute the `GetTopEmojisByCity` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+getTopEmojisByCity(options?: ExecuteQueryOptions): QueryPromise<GetTopEmojisByCityData, undefined>;
+
+interface GetTopEmojisByCityRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<GetTopEmojisByCityData, undefined>;
+}
+export const getTopEmojisByCityRef: GetTopEmojisByCityRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
+```typescript
+getTopEmojisByCity(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<GetTopEmojisByCityData, undefined>;
+
+interface GetTopEmojisByCityRef {
+  ...
+  (dc: DataConnect): QueryRef<GetTopEmojisByCityData, undefined>;
+}
+export const getTopEmojisByCityRef: GetTopEmojisByCityRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the getTopEmojisByCityRef:
+```typescript
+const name = getTopEmojisByCityRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `GetTopEmojisByCity` query has no variables.
+### Return Type
+Recall that executing the `GetTopEmojisByCity` query returns a `QueryPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `GetTopEmojisByCityData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface GetTopEmojisByCityData {
+  cityTrends?: unknown[] | null;
+}
+```
+### Using `GetTopEmojisByCity`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, getTopEmojisByCity } from '@dataconnect/generated';
+
+
+// Call the `getTopEmojisByCity()` function to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await getTopEmojisByCity();
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await getTopEmojisByCity(dataConnect);
+
+console.log(data.cityTrends);
+
+// Or, you can use the `Promise` API.
+getTopEmojisByCity().then((response) => {
+  const data = response.data;
+  console.log(data.cityTrends);
+});
+```
+
+### Using `GetTopEmojisByCity`'s `QueryRef` function
+
+```typescript
+import { getDataConnect, executeQuery } from 'firebase/data-connect';
+import { connectorConfig, getTopEmojisByCityRef } from '@dataconnect/generated';
+
+
+// Call the `getTopEmojisByCityRef()` function to get a reference to the query.
+const ref = getTopEmojisByCityRef();
+
+// You can also pass in a `DataConnect` instance to the `QueryRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = getTopEmojisByCityRef(dataConnect);
+
+// Call `executeQuery()` on the reference to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeQuery(ref);
+
+console.log(data.cityTrends);
+
+// Or, you can use the `Promise` API.
+executeQuery(ref).then((response) => {
+  const data = response.data;
+  console.log(data.cityTrends);
+});
+```
+
+## GetTrendingEmojisNearMe
+You can execute the `GetTrendingEmojisNearMe` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+getTrendingEmojisNearMe(vars: GetTrendingEmojisNearMeVariables, options?: ExecuteQueryOptions): QueryPromise<GetTrendingEmojisNearMeData, GetTrendingEmojisNearMeVariables>;
+
+interface GetTrendingEmojisNearMeRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: GetTrendingEmojisNearMeVariables): QueryRef<GetTrendingEmojisNearMeData, GetTrendingEmojisNearMeVariables>;
+}
+export const getTrendingEmojisNearMeRef: GetTrendingEmojisNearMeRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
+```typescript
+getTrendingEmojisNearMe(dc: DataConnect, vars: GetTrendingEmojisNearMeVariables, options?: ExecuteQueryOptions): QueryPromise<GetTrendingEmojisNearMeData, GetTrendingEmojisNearMeVariables>;
+
+interface GetTrendingEmojisNearMeRef {
+  ...
+  (dc: DataConnect, vars: GetTrendingEmojisNearMeVariables): QueryRef<GetTrendingEmojisNearMeData, GetTrendingEmojisNearMeVariables>;
+}
+export const getTrendingEmojisNearMeRef: GetTrendingEmojisNearMeRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the getTrendingEmojisNearMeRef:
+```typescript
+const name = getTrendingEmojisNearMeRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `GetTrendingEmojisNearMe` query requires an argument of type `GetTrendingEmojisNearMeVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface GetTrendingEmojisNearMeVariables {
+  userLng: number;
+  userLat: number;
+  radiusMeters: number;
+}
+```
+### Return Type
+Recall that executing the `GetTrendingEmojisNearMe` query returns a `QueryPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `GetTrendingEmojisNearMeData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface GetTrendingEmojisNearMeData {
+  regionalTrends?: unknown[] | null;
+}
+```
+### Using `GetTrendingEmojisNearMe`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, getTrendingEmojisNearMe, GetTrendingEmojisNearMeVariables } from '@dataconnect/generated';
+
+// The `GetTrendingEmojisNearMe` query requires an argument of type `GetTrendingEmojisNearMeVariables`:
+const getTrendingEmojisNearMeVars: GetTrendingEmojisNearMeVariables = {
+  userLng: ..., 
+  userLat: ..., 
+  radiusMeters: ..., 
+};
+
+// Call the `getTrendingEmojisNearMe()` function to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await getTrendingEmojisNearMe(getTrendingEmojisNearMeVars);
+// Variables can be defined inline as well.
+const { data } = await getTrendingEmojisNearMe({ userLng: ..., userLat: ..., radiusMeters: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await getTrendingEmojisNearMe(dataConnect, getTrendingEmojisNearMeVars);
+
+console.log(data.regionalTrends);
+
+// Or, you can use the `Promise` API.
+getTrendingEmojisNearMe(getTrendingEmojisNearMeVars).then((response) => {
+  const data = response.data;
+  console.log(data.regionalTrends);
+});
+```
+
+### Using `GetTrendingEmojisNearMe`'s `QueryRef` function
+
+```typescript
+import { getDataConnect, executeQuery } from 'firebase/data-connect';
+import { connectorConfig, getTrendingEmojisNearMeRef, GetTrendingEmojisNearMeVariables } from '@dataconnect/generated';
+
+// The `GetTrendingEmojisNearMe` query requires an argument of type `GetTrendingEmojisNearMeVariables`:
+const getTrendingEmojisNearMeVars: GetTrendingEmojisNearMeVariables = {
+  userLng: ..., 
+  userLat: ..., 
+  radiusMeters: ..., 
+};
+
+// Call the `getTrendingEmojisNearMeRef()` function to get a reference to the query.
+const ref = getTrendingEmojisNearMeRef(getTrendingEmojisNearMeVars);
+// Variables can be defined inline as well.
+const ref = getTrendingEmojisNearMeRef({ userLng: ..., userLat: ..., radiusMeters: ..., });
+
+// You can also pass in a `DataConnect` instance to the `QueryRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = getTrendingEmojisNearMeRef(dataConnect, getTrendingEmojisNearMeVars);
+
+// Call `executeQuery()` on the reference to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeQuery(ref);
+
+console.log(data.regionalTrends);
+
+// Or, you can use the `Promise` API.
+executeQuery(ref).then((response) => {
+  const data = response.data;
+  console.log(data.regionalTrends);
+});
+```
+
 # Mutations
 
 There are two ways to execute a Data Connect Mutation using the generated Web SDK:
@@ -1633,6 +1843,233 @@ executeMutation(ref).then((response) => {
   console.log(data.emoji_update);
   console.log(data.event_insert);
   console.log(data.priceHistory_insert);
+});
+```
+
+## BuyStock
+You can execute the `BuyStock` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+buyStock(vars: BuyStockVariables): MutationPromise<BuyStockData, BuyStockVariables>;
+
+interface BuyStockRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: BuyStockVariables): MutationRef<BuyStockData, BuyStockVariables>;
+}
+export const buyStockRef: BuyStockRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
+```typescript
+buyStock(dc: DataConnect, vars: BuyStockVariables): MutationPromise<BuyStockData, BuyStockVariables>;
+
+interface BuyStockRef {
+  ...
+  (dc: DataConnect, vars: BuyStockVariables): MutationRef<BuyStockData, BuyStockVariables>;
+}
+export const buyStockRef: BuyStockRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the buyStockRef:
+```typescript
+const name = buyStockRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `BuyStock` mutation requires an argument of type `BuyStockVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface BuyStockVariables {
+  emojiId: UUIDString;
+  amount: number;
+  isDiscounted: boolean;
+}
+```
+### Return Type
+Recall that executing the `BuyStock` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `BuyStockData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface BuyStockData {
+  buyStock?: number | null;
+}
+```
+### Using `BuyStock`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, buyStock, BuyStockVariables } from '@dataconnect/generated';
+
+// The `BuyStock` mutation requires an argument of type `BuyStockVariables`:
+const buyStockVars: BuyStockVariables = {
+  emojiId: ..., 
+  amount: ..., 
+  isDiscounted: ..., 
+};
+
+// Call the `buyStock()` function to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await buyStock(buyStockVars);
+// Variables can be defined inline as well.
+const { data } = await buyStock({ emojiId: ..., amount: ..., isDiscounted: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await buyStock(dataConnect, buyStockVars);
+
+console.log(data.buyStock);
+
+// Or, you can use the `Promise` API.
+buyStock(buyStockVars).then((response) => {
+  const data = response.data;
+  console.log(data.buyStock);
+});
+```
+
+### Using `BuyStock`'s `MutationRef` function
+
+```typescript
+import { getDataConnect, executeMutation } from 'firebase/data-connect';
+import { connectorConfig, buyStockRef, BuyStockVariables } from '@dataconnect/generated';
+
+// The `BuyStock` mutation requires an argument of type `BuyStockVariables`:
+const buyStockVars: BuyStockVariables = {
+  emojiId: ..., 
+  amount: ..., 
+  isDiscounted: ..., 
+};
+
+// Call the `buyStockRef()` function to get a reference to the mutation.
+const ref = buyStockRef(buyStockVars);
+// Variables can be defined inline as well.
+const ref = buyStockRef({ emojiId: ..., amount: ..., isDiscounted: ..., });
+
+// You can also pass in a `DataConnect` instance to the `MutationRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = buyStockRef(dataConnect, buyStockVars);
+
+// Call `executeMutation()` on the reference to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeMutation(ref);
+
+console.log(data.buyStock);
+
+// Or, you can use the `Promise` API.
+executeMutation(ref).then((response) => {
+  const data = response.data;
+  console.log(data.buyStock);
+});
+```
+
+## SellStock
+You can execute the `SellStock` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+sellStock(vars: SellStockVariables): MutationPromise<SellStockData, SellStockVariables>;
+
+interface SellStockRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: SellStockVariables): MutationRef<SellStockData, SellStockVariables>;
+}
+export const sellStockRef: SellStockRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
+```typescript
+sellStock(dc: DataConnect, vars: SellStockVariables): MutationPromise<SellStockData, SellStockVariables>;
+
+interface SellStockRef {
+  ...
+  (dc: DataConnect, vars: SellStockVariables): MutationRef<SellStockData, SellStockVariables>;
+}
+export const sellStockRef: SellStockRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the sellStockRef:
+```typescript
+const name = sellStockRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `SellStock` mutation requires an argument of type `SellStockVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface SellStockVariables {
+  emojiId: UUIDString;
+  amount: number;
+}
+```
+### Return Type
+Recall that executing the `SellStock` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `SellStockData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface SellStockData {
+  sellStock?: number | null;
+}
+```
+### Using `SellStock`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, sellStock, SellStockVariables } from '@dataconnect/generated';
+
+// The `SellStock` mutation requires an argument of type `SellStockVariables`:
+const sellStockVars: SellStockVariables = {
+  emojiId: ..., 
+  amount: ..., 
+};
+
+// Call the `sellStock()` function to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await sellStock(sellStockVars);
+// Variables can be defined inline as well.
+const { data } = await sellStock({ emojiId: ..., amount: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await sellStock(dataConnect, sellStockVars);
+
+console.log(data.sellStock);
+
+// Or, you can use the `Promise` API.
+sellStock(sellStockVars).then((response) => {
+  const data = response.data;
+  console.log(data.sellStock);
+});
+```
+
+### Using `SellStock`'s `MutationRef` function
+
+```typescript
+import { getDataConnect, executeMutation } from 'firebase/data-connect';
+import { connectorConfig, sellStockRef, SellStockVariables } from '@dataconnect/generated';
+
+// The `SellStock` mutation requires an argument of type `SellStockVariables`:
+const sellStockVars: SellStockVariables = {
+  emojiId: ..., 
+  amount: ..., 
+};
+
+// Call the `sellStockRef()` function to get a reference to the mutation.
+const ref = sellStockRef(sellStockVars);
+// Variables can be defined inline as well.
+const ref = sellStockRef({ emojiId: ..., amount: ..., });
+
+// You can also pass in a `DataConnect` instance to the `MutationRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = sellStockRef(dataConnect, sellStockVars);
+
+// Call `executeMutation()` on the reference to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeMutation(ref);
+
+console.log(data.sellStock);
+
+// Or, you can use the `Promise` API.
+executeMutation(ref).then((response) => {
+  const data = response.data;
+  console.log(data.sellStock);
 });
 ```
 

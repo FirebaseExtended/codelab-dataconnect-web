@@ -1,4 +1,4 @@
-import { upsertUserRef, updateUserRoleRef, updateUserLocationRef, triggerEventRef, marketMakerTradeRef, getDashboardDataRef, getUserProfileRef, getPriceHistoryRef, getEmojiWhaleStatsRef, getEmojiHistoryStatsRef, getTopTradersRef, getChronologicalTickerRef, getEmojiSparklinesRef, searchEmojisRef, connectorConfig } from '../../esm/index.esm.js';
+import { upsertUserRef, updateUserRoleRef, updateUserLocationRef, triggerEventRef, marketMakerTradeRef, buyStockRef, sellStockRef, getDashboardDataRef, getUserProfileRef, getPriceHistoryRef, getEmojiWhaleStatsRef, getEmojiHistoryStatsRef, getTopTradersRef, getChronologicalTickerRef, getEmojiSparklinesRef, searchEmojisRef, getTopEmojisByCityRef, getTrendingEmojisNearMeRef, connectorConfig } from '../../esm/index.esm.js';
 import { validateArgs, CallerSdkTypeEnum } from 'firebase/data-connect';
 import { useDataConnectQuery, useDataConnectMutation, validateReactArgs } from '@tanstack-query-firebase/react/data-connect';
 
@@ -38,6 +38,22 @@ export function useMarketMakerTrade(dcOrOptions, options) {
   const { dc: dcInstance, vars: inputOpts } = validateArgs(connectorConfig, dcOrOptions, options);
   function refFactory(vars) {
     return marketMakerTradeRef(dcInstance, vars);
+  }
+  return useDataConnectMutation(refFactory, inputOpts, CallerSdkTypeEnum.GeneratedReact);
+}
+
+export function useBuyStock(dcOrOptions, options) {
+  const { dc: dcInstance, vars: inputOpts } = validateArgs(connectorConfig, dcOrOptions, options);
+  function refFactory(vars) {
+    return buyStockRef(dcInstance, vars);
+  }
+  return useDataConnectMutation(refFactory, inputOpts, CallerSdkTypeEnum.GeneratedReact);
+}
+
+export function useSellStock(dcOrOptions, options) {
+  const { dc: dcInstance, vars: inputOpts } = validateArgs(connectorConfig, dcOrOptions, options);
+  function refFactory(vars) {
+    return sellStockRef(dcInstance, vars);
   }
   return useDataConnectMutation(refFactory, inputOpts, CallerSdkTypeEnum.GeneratedReact);
 }
@@ -94,5 +110,17 @@ export function useGetEmojiSparklines(dcOrOptions, options) {
 export function useSearchEmojis(dcOrVars, varsOrOptions, options) {
   const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateReactArgs(connectorConfig, dcOrVars, varsOrOptions, options, true, false);
   const ref = searchEmojisRef(dcInstance, inputVars);
+  return useDataConnectQuery(ref, inputOpts, CallerSdkTypeEnum.GeneratedReact);
+}
+
+export function useGetTopEmojisByCity(dcOrOptions, options) {
+  const { dc: dcInstance, options: inputOpts } = validateReactArgs(connectorConfig, dcOrOptions, options);
+  const ref = getTopEmojisByCityRef(dcInstance);
+  return useDataConnectQuery(ref, inputOpts, CallerSdkTypeEnum.GeneratedReact);
+}
+
+export function useGetTrendingEmojisNearMe(dcOrVars, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateReactArgs(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
+  const ref = getTrendingEmojisNearMeRef(dcInstance, inputVars);
   return useDataConnectQuery(ref, inputOpts, CallerSdkTypeEnum.GeneratedReact);
 }

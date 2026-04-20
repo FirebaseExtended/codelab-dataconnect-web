@@ -105,16 +105,124 @@ mutation MarketMakerTrade(
   priceHistory_insert(data: { emojiId: $emojiId, price: $newPrice })
 }
 
-
 # Buy shares of an emoji stock
-# mutation BuyStock($emojiId: UUID!, $amount: Int!, $isDiscounted: Boolean!) @auth(level: USER) {
-#   # TODO: Implement buyStock _execute native SQL mutation
-# }
+mutation BuyStock($emojiId: UUID!, $amount: Int!, $isDiscounted: Boolean!)
+@auth(level: USER) {
+  buyStock: _execute(
+    sql: """
+    WITH validated_params AS (
+      SELECT
+        $1::uuid AS emoji_id,
+        $2::int AS amount,
+        $3::boolean AS is_discounted,
+        $4::text AS user_id
+    ),
+    target_emoji AS (
+      SELECT
+        e.id,
+        (e.current_price * (CASE WHEN vp.is_discounted THEN 0.5 ELSE 1.0 END) * vp.amount) AS total_cost
+      FROM emoji e
+      CROSS JOIN validated_params vp
+      WHERE e.id = vp.emoji_id
+        AND vp.amount > 0
+        AND vp.amount <= 100
+    ),
+    deduct_funds AS (
+      UPDATE "user" u
+      SET points = u.points - te.total_cost
+      FROM target_emoji te, validated_params vp
+      WHERE u.id = vp.user_id AND u.points >= te.total_cost
+      RETURNING u.id
+    ),
+    upsert_ownership AS (
+      INSERT INTO stock_ownership (user_id, emoji_id, shares)
+      SELECT vp.user_id, vp.emoji_id, vp.amount
+      FROM validated_params vp
+      WHERE EXISTS (SELECT 1 FROM deduct_funds)
+      ON CONFLICT (user_id, emoji_id) DO UPDATE
+      SET shares = stock_ownership.shares + EXCLUDED.shares
+      RETURNING stock_ownership.emoji_id
+    ),
+    update_emoji AS (
+      UPDATE emoji e
+      SET
+        current_price = GREATEST(0.01, e.current_price + (e.current_price * 0.01 * vp.amount)),
+        trend = GREATEST(0.01, e.current_price + (e.current_price * 0.01 * vp.amount)) - e.current_price
+      FROM validated_params vp
+      WHERE e.id = vp.emoji_id AND EXISTS (SELECT 1 FROM deduct_funds)
+      RETURNING e.id, e.current_price, e.trend
+    )
+    INSERT INTO price_history (id, emoji_id, price, recorded_at)
+    SELECT gen_random_uuid(), ue.id, ue.current_price, NOW()
+    FROM update_emoji ue;
+    """
+    params: [$emojiId, $amount, $isDiscounted, { _expr: "auth.uid" }]
+  )
+}
 
 # Sell shares of an emoji stock
-# mutation SellStock($emojiId: UUID!, $amount: Int!) @auth(level: USER) {
-#   # TODO: Implement sellStock _execute native SQL mutation
-# }
+mutation SellStock($emojiId: UUID!, $amount: Int!) @auth(level: USER) {
+  sellStock: _execute(
+    sql: """
+    WITH validated_params AS (
+      SELECT
+        $1::uuid AS emoji_id,
+        $2::int AS amount,
+        $3::text AS user_id
+    ),
+    target_emoji AS (
+      SELECT
+        e.id,
+        (e.current_price * vp.amount) AS total_revenue,
+        GREATEST(0.01, e.current_price * POWER(0.99, vp.amount)) AS new_price
+      FROM emoji e
+      CROSS JOIN validated_params vp
+      WHERE e.id = vp.emoji_id
+        AND vp.amount > 0
+        AND vp.amount <= 100
+    ),
+    check_shares AS (
+      SELECT so.user_id
+      FROM stock_ownership so
+      CROSS JOIN validated_params vp
+      WHERE so.user_id = vp.user_id
+        AND so.emoji_id = vp.emoji_id
+        AND so.shares >= vp.amount
+    ),
+    add_funds AS (
+      UPDATE "user" u
+      SET points = u.points + te.total_revenue
+      FROM target_emoji te, validated_params vp
+      WHERE u.id = vp.user_id AND EXISTS (SELECT 1 FROM check_shares)
+      RETURNING u.id
+    ),
+    update_ownership AS (
+      UPDATE stock_ownership so
+      SET shares = so.shares - vp.amount
+      FROM validated_params vp
+      WHERE so.user_id = vp.user_id
+        AND so.emoji_id = vp.emoji_id
+        AND EXISTS (SELECT 1 FROM check_shares)
+        AND EXISTS (SELECT 1 FROM add_funds)
+    ),
+    update_emoji AS (
+      UPDATE emoji e
+      SET
+        current_price = te.new_price,
+        trend = te.new_price - e.current_price
+      FROM target_emoji te, validated_params vp
+      WHERE e.id = vp.emoji_id
+        AND EXISTS (SELECT 1 FROM check_shares)
+        AND EXISTS (SELECT 1 FROM add_funds)
+      RETURNING e.id, e.current_price, e.trend
+    )
+    INSERT INTO price_history (id, emoji_id, price, recorded_at)
+    SELECT gen_random_uuid(), ue.id, ue.current_price, NOW()
+    FROM update_emoji ue;
+    """
+    params: [$emojiId, $amount, { _expr: "auth.uid" }]
+  )
+}
 
 # Generate an AI headline for a stock trade
 # mutation GenerateTradeHeadline(

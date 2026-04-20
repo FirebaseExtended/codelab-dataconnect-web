@@ -18,7 +18,11 @@ query GetDashboardData
 @auth(
   level: PUBLIC
   insecureReason: "This operation is safe to expose to the public."
-) {
+)
+@refresh(onMutationExecuted: { operation: "BuyStock" })
+@refresh(onMutationExecuted: { operation: "SellStock" })
+@refresh(onMutationExecuted: { operation: "TriggerEvent" })
+@refresh(onMutationExecuted: { operation: "MarketMakerTrade" }) {
   emojis(orderBy: [{ currentPrice: DESC }]) {
     id
     symbol
@@ -43,7 +47,12 @@ query GetDashboardData
 }
 
 # Get current authenticated user profile and their stock ownership using auth.uid
-query GetUserProfile @auth(level: USER) {
+query GetUserProfile
+@auth(level: USER)
+@refresh(onMutationExecuted: { operation: "BuyStock" })
+@refresh(onMutationExecuted: { operation: "SellStock" })
+@refresh(onMutationExecuted: { operation: "UpdateUserLocation" })
+@refresh(onMutationExecuted: { operation: "UpdateUserRole" }) {
   user(id_expr: "auth.uid") {
     points
     username
@@ -69,7 +78,10 @@ query GetPriceHistory($emojiId: UUID!, $limit: Int)
 @auth(
   level: PUBLIC
   insecureReason: "This operation is safe to expose to the public."
-) {
+)
+@refresh(onMutationExecuted: { operation: "BuyStock" })
+@refresh(onMutationExecuted: { operation: "SellStock" })
+@refresh(onMutationExecuted: { operation: "MarketMakerTrade" }) {
   priceHistories(
     where: { emojiId: { eq: $emojiId } }
     orderBy: [{ recordedAt: ASC }]
@@ -80,13 +92,15 @@ query GetPriceHistory($emojiId: UUID!, $limit: Int)
   }
 }
 
-
 # Get emoji whale statistics to identify top shareholders from emojiWhaleStats view
 query GetEmojiWhaleStats
 @auth(
   level: PUBLIC
   insecureReason: "This operation is safe to expose to the public."
-) {
+)
+@refresh(onMutationExecuted: { operation: "BuyStock" })
+@refresh(onMutationExecuted: { operation: "SellStock" })
+@refresh(onMutationExecuted: { operation: "MarketMakerTrade" }) {
   emojiWhaleStats {
     emojiId
     whaleUsername
@@ -102,7 +116,10 @@ query GetEmojiHistoryStats($emojiId: UUID!)
 @auth(
   level: PUBLIC
   insecureReason: "This operation is safe to expose to the public."
-) {
+)
+@refresh(onMutationExecuted: { operation: "BuyStock" })
+@refresh(onMutationExecuted: { operation: "SellStock" })
+@refresh(onMutationExecuted: { operation: "MarketMakerTrade" }) {
   emojiHistoryStats(
     where: { emojiId: { eq: $emojiId } }
     orderBy: [{ recordedAt: ASC }]
@@ -119,7 +136,11 @@ query GetTopTraders
 @auth(
   level: PUBLIC
   insecureReason: "This operation is safe to expose to the public."
-) {
+)
+@refresh(onMutationExecuted: { operation: "BuyStock" })
+@refresh(onMutationExecuted: { operation: "SellStock" })
+@refresh(onMutationExecuted: { operation: "TriggerEvent" })
+@refresh(onMutationExecuted: { operation: "MarketMakerTrade" }) {
   topTraders(orderBy: [{ rank: ASC }]) {
     id
     username
@@ -134,7 +155,11 @@ query GetChronologicalTicker
 @auth(
   level: PUBLIC
   insecureReason: "This operation is safe to expose to the public."
-) {
+)
+@refresh(onMutationExecuted: { operation: "BuyStock" })
+@refresh(onMutationExecuted: { operation: "SellStock" })
+@refresh(onMutationExecuted: { operation: "TriggerEvent" })
+@refresh(onMutationExecuted: { operation: "MarketMakerTrade" }) {
   tickerFeeds(orderBy: [{ eventTime: DESC }], limit: 30) {
     type
     symbol
@@ -151,7 +176,10 @@ query GetEmojiSparklines
 @auth(
   level: PUBLIC
   insecureReason: "This operation is safe to expose to the public."
-) {
+)
+@refresh(onMutationExecuted: { operation: "BuyStock" })
+@refresh(onMutationExecuted: { operation: "SellStock" })
+@refresh(onMutationExecuted: { operation: "MarketMakerTrade" }) {
   emojiSparklines {
     emojiId
     price
@@ -159,13 +187,15 @@ query GetEmojiSparklines
   }
 }
 
-
 # Search emojis using full-text search query
 query SearchEmojis($query: String)
 @auth(
   level: PUBLIC
   insecureReason: "This operation is safe to expose to the public."
-) {
+)
+@refresh(onMutationExecuted: { operation: "BuyStock" })
+@refresh(onMutationExecuted: { operation: "SellStock" })
+@refresh(onMutationExecuted: { operation: "MarketMakerTrade" }) {
   emojis_search(query: $query) {
     id
     symbol
@@ -181,7 +211,10 @@ query GetTopEmojisByCity
 @auth(
   level: PUBLIC
   insecureReason: "This operation is safe to expose to the public."
-) {
+)
+@refresh(onMutationExecuted: { operation: "BuyStock" })
+@refresh(onMutationExecuted: { operation: "SellStock" })
+@refresh(onMutationExecuted: { operation: "MarketMakerTrade" }) {
   cityTrends: _select(
     sql: """
     WITH city_shares AS (
@@ -218,7 +251,10 @@ query GetTrendingEmojisNearMe(
 @auth(
   level: PUBLIC
   insecureReason: "This operation is safe to expose to the public."
-) {
+)
+@refresh(onMutationExecuted: { operation: "BuyStock" })
+@refresh(onMutationExecuted: { operation: "SellStock" })
+@refresh(onMutationExecuted: { operation: "MarketMakerTrade" }) {
   regionalTrends: _select(
     sql: """
     SELECT
@@ -247,7 +283,6 @@ query GetTrendingEmojisNearMe(
     params: [$userLng, $userLat, $radiusMeters]
   )
 }
-
 
 # Search emoji descriptions using Vertex AI embeddings
 # query VectorSearchEmojis($query: String!)

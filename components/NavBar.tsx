@@ -31,24 +31,17 @@ import { getUserProfileRef } from "@dataconnect/generated";
 const UserBalance = ({ mobile = false }: { mobile?: boolean }) => {
   const [data, setData] = useState<any>(null);
 
-useEffect(() => {
-  // Subscribe to realtime updates for the authenticated user's profile and stock ownership
-  const unsubscribe = subscribe(
-    getUserProfileRef(),
-    (res) => {
-      if (res.data) {
-        setData(res.data);
-      }
-      setIsLoading(false);
-    },
-    (err) => {
-      console.error("Profile Realtime Error:", err);
-      setIsLoading(false);
-    },
-  );
-  return () => unsubscribe();
-}, []);
-
+  useEffect(() => {
+    // Subscribe to realtime updates for the authenticated user's profile and stock ownership
+    const unsub = subscribe(
+      getUserProfileRef(),
+      (res) => {
+        if (res.data) setData(res.data);
+      },
+      (err) => console.error("Navbar Balance Realtime Error:", err),
+    );
+    return () => unsub();
+  }, []);
 
   const netWorth = useMemo(() => {
     if (!data?.user) return 0;

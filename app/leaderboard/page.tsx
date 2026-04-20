@@ -19,8 +19,8 @@ import { useState, useEffect } from "react";
 import MarketPanel from "../../components/MarketPanel";
 import { useInspector } from "../../lib/InspectorContext";
 
-// import { subscribe } from "@firebase/data-connect";
-// import { getTopTradersRef } from "@dataconnect/generated";
+import { subscribe } from "@firebase/data-connect";
+import { getTopTradersRef } from "@dataconnect/generated";
 
 export default function LeaderboardPage() {
   const [data, setData] = useState<any>(null);
@@ -29,8 +29,19 @@ export default function LeaderboardPage() {
   const { logEvent, isOpen, logs } = useInspector();
 
   useEffect(() => {
-    // TODO: Subscribe to realtime updates for the global leaderboard (getTopTradersRef)
-    setIsLoading(false);
+    // Subscribe to realtime updates for the global leaderboard ranking top traders by net worth
+    const unsubscribe = subscribe(
+      getTopTradersRef(),
+      (res) => {
+        if (res.data) setData(res.data);
+        setIsLoading(false);
+      },
+      (err) => {
+        console.error("Leaderboard Realtime Error:", err);
+        setIsLoading(false);
+      },
+    );
+    return () => unsubscribe();
   }, []);
 
   useEffect(() => {

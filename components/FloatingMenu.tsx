@@ -24,9 +24,9 @@ import {
   executeUpdateRole,
 } from "../lib/ExchangeService";
 
-// import { subscribe } from "@firebase/data-connect";
-// import { useGetDashboardData } from "@dataconnect/generated/react";
-// import { getUserProfileRef } from "@dataconnect/generated";
+import { subscribe } from "@firebase/data-connect";
+import { useGetDashboardData } from "@dataconnect/generated/react";
+import { getUserProfileRef } from "@dataconnect/generated";
 
 export default function FloatingMenu() {
   const { user } = useAuth();
@@ -39,15 +39,18 @@ export default function FloatingMenu() {
   const [profileData, setProfileData] = useState<any>(null);
   const [optimisticRole, setOptimisticRole] = useState<string | null>(null);
 
-  // TODO: Replace with useGetDashboardData() generated hook
-  const { data, refetch: refetchDashboard } = {
-    data: null as any,
-    refetch: () => {},
-  };
+  const { data, refetch: refetchDashboard } = useGetDashboardData();
 
   useEffect(() => {
     if (!user) return;
-    // TODO: Subscribe to realtime updates for the authenticated user's profile (getUserProfileRef)
+    // Subscribe to realtime updates for the authenticated user's profile
+    const unsub = subscribe(getUserProfileRef(), (res) => {
+      if (res.data) {
+        setProfileData(res.data);
+        setOptimisticRole(null);
+      }
+    });
+    return () => unsub();
   }, [user]);
 
   const userRole = optimisticRole || profileData?.user?.role || "USER";

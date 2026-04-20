@@ -24,14 +24,14 @@ import TickerList from "../components/TickerList";
 import { useToast } from "@/lib/ToastContext";
 import { executeBuyStock, executeSellStock } from "../lib/ExchangeService";
 
-// import { subscribe } from "@firebase/data-connect";
-// import {
-//   getDashboardDataRef,
-//   searchEmojisRef,
-//   vectorSearchEmojisRef,
-//   getChronologicalTickerRef,
-//   getUserProfileRef,
-// } from "@dataconnect/generated";
+import { subscribe } from "@firebase/data-connect";
+import {
+  getDashboardDataRef,
+  searchEmojisRef,
+  // vectorSearchEmojisRef,
+  getChronologicalTickerRef,
+  getUserProfileRef,
+} from "@dataconnect/generated";
 
 export default function Home() {
   const [dashboardData, setDashboardData] = useState<any>(null);
@@ -60,17 +60,44 @@ export default function Home() {
   const { showToast } = useToast();
 
   useEffect(() => {
-    // TODO: Subscribe to realtime updates for the main market dashboard data (getDashboardDataRef)
-    setIsDashboardLoading(false);
+    // Subscribe to realtime updates for the main market dashboard data including top emojis and recent events
+    const unsubscribe = subscribe(
+      getDashboardDataRef(),
+      (res) => {
+        if (res.data) setDashboardData(res.data);
+        setIsDashboardLoading(false);
+      },
+      (err) => {
+        console.error("Dashboard Realtime Error:", err);
+        setIsDashboardLoading(false);
+      },
+    );
+    return () => unsubscribe();
   }, [user]);
 
   useEffect(() => {
-    // TODO: Subscribe to a realtime chronological ticker feed (getChronologicalTickerRef)
+    // Subscribe to a realtime chronological ticker feed combining recent price updates and major news events
+    const unsubscribe = subscribe(
+      getChronologicalTickerRef(),
+      (res) => {
+        if (res.data) setTickerData(res.data);
+      },
+      (err) => console.error("Ticker Realtime Error:", err),
+    );
+    return () => unsubscribe();
   }, []);
 
   useEffect(() => {
     if (loading || !user) return;
-    // TODO: Subscribe to realtime updates for the authenticated user's profile (getUserProfileRef)
+    // Subscribe to realtime updates for the authenticated user's profile and stock ownership
+    const unsubscribe = subscribe(
+      getUserProfileRef(),
+      (res) => {
+        if (res.data) setProfileData(res.data);
+      },
+      (err) => console.error("Profile Error:", err),
+    );
+    return () => unsubscribe();
   }, [user, loading]);
 
   useEffect(() => {
@@ -78,15 +105,23 @@ export default function Home() {
       setSearchData(null);
       return;
     }
+    
+    // Subscribe to realtime full-text search results for emojis based on user input
+    const unsubscribe = subscribe(
+      searchEmojisRef({ query: debouncedSearch }),
+      (res) => {
+        if (res.data) setSearchData(res.data.emojis_search);
+        setIsSearchLoading(false);
+      },
+      (err) => {
+        console.error("Text Search Error:", err);
+        setIsSearchLoading(false);
+      },
+    );
 
-    if (searchMode === "TEXT") {
-      // TODO: Subscribe to realtime full-text search results for emojis (searchEmojisRef)
-      setIsSearchLoading(false);
-    } else {
-      // TODO: Subscribe to realtime vector search results using semantic similarity (vectorSearchEmojisRef)
-      setIsSearchLoading(false);
-    }
-  }, [debouncedSearch, searchMode]);
+    return () => unsubscribe();
+  }, [debouncedSearch]);
+
 
   useEffect(() => {
     const timer = setTimeout(() => {

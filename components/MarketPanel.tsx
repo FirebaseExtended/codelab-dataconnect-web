@@ -20,11 +20,11 @@ import { ResponsiveContainer, AreaChart, Area, YAxis } from "recharts";
 import { motion } from "framer-motion";
 import AnimatedNumber from "../components/AnimatedNumber";
 
-// import { subscribe } from "@firebase/data-connect";
-// import {
-//   getDashboardDataRef,
-//   getEmojiSparklinesRef,
-// } from "@dataconnect/generated";
+import { subscribe } from "@firebase/data-connect";
+import {
+  getDashboardDataRef,
+  getEmojiSparklinesRef,
+} from "@dataconnect/generated";
 
 const EmojiCard = ({
   emoji,
@@ -110,11 +110,29 @@ export default function MarketPanel() {
   const [sparklineRawData, setSparklineRawData] = useState<any[]>([]);
 
   useEffect(() => {
-    // TODO: Subscribe to realtime updates for main market dashboard data (getDashboardDataRef)
+    // Subscribe to realtime updates for the main market dashboard data including top emojis and recent events
+    const unsub = subscribe(
+      getDashboardDataRef(),
+      (res) => {
+        if (res.data) setData(res.data);
+      },
+      (err) => console.error("Market Panel Realtime Error:", err),
+    );
+    return () => unsub();
   }, []);
 
   useEffect(() => {
-    // TODO: Subscribe to realtime price history updates to render emoji sparklines (getEmojiSparklinesRef)
+    // Subscribe to realtime price history updates to render emoji sparkline charts
+    const unsub = subscribe(
+      getEmojiSparklinesRef(),
+      (res) => {
+        if (res.data?.emojiSparklines) {
+          setSparklineRawData(res.data.emojiSparklines);
+        }
+      },
+      (err) => console.error("Global Sparklines Error:", err),
+    );
+    return () => unsub();
   }, []);
 
   const groupedSparklines = useMemo(() => {

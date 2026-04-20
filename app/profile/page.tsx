@@ -26,8 +26,8 @@ import {
   executeUpdateLocation,
 } from "../../lib/ExchangeService";
 
-// import { subscribe } from "@firebase/data-connect";
-// import { getUserProfileRef } from "@dataconnect/generated";
+import { subscribe } from "@firebase/data-connect";
+import { getUserProfileRef } from "@dataconnect/generated";
 
 export default function ProfilePage() {
   const [data, setData] = useState<any>(null);
@@ -47,9 +47,23 @@ export default function ProfilePage() {
   const { showToast } = useToast();
 
 useEffect(() => {
-    // TODO: Subscribe to realtime updates for the authenticated user's profile (getUserProfileRef)
-    setIsLoading(false);
-  }, []);
+  // Subscribe to realtime updates for the authenticated user's profile and stock ownership
+  const unsubscribe = subscribe(
+    getUserProfileRef(),
+    (res) => {
+      if (res.data) {
+        setData(res.data);
+      }
+      setIsLoading(false);
+    },
+    (err) => {
+      console.error("Profile Realtime Error:", err);
+      setIsLoading(false);
+    },
+  );
+  return () => unsubscribe();
+}, []);
+
 
   useEffect(() => {
     if (data?.user && !isLocationInitialized) {

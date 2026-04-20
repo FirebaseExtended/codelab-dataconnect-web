@@ -25,15 +25,30 @@ import { useInspector } from "../lib/InspectorContext";
 import ThemeToggle from "./ThemeToggle";
 import { executeUpsertUser } from "../lib/ExchangeService";
 
-// import { subscribe } from "@firebase/data-connect";
-// import { getUserProfileRef } from "@dataconnect/generated";
+import { subscribe } from "@firebase/data-connect";
+import { getUserProfileRef } from "@dataconnect/generated";
 
 const UserBalance = ({ mobile = false }: { mobile?: boolean }) => {
   const [data, setData] = useState<any>(null);
 
-  useEffect(() => {
-    // TODO: Subscribe to realtime updates for the authenticated user's profile (getUserProfileRef)
-  }, []);
+useEffect(() => {
+  // Subscribe to realtime updates for the authenticated user's profile and stock ownership
+  const unsubscribe = subscribe(
+    getUserProfileRef(),
+    (res) => {
+      if (res.data) {
+        setData(res.data);
+      }
+      setIsLoading(false);
+    },
+    (err) => {
+      console.error("Profile Realtime Error:", err);
+      setIsLoading(false);
+    },
+  );
+  return () => unsubscribe();
+}, []);
+
 
   const netWorth = useMemo(() => {
     if (!data?.user) return 0;

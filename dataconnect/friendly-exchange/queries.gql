@@ -14,76 +14,167 @@
 #
 
 # Get dashboard data including top emojis by price and recent market events
-# query GetDashboardData
-# @auth(level: PUBLIC, insecureReason: "This operation is safe to expose to the public.")
-# # TODO: Add @refresh directives for BuyStock, SellStock, TriggerEvent, MarketMakerTrade, TriggerSocialBoost
-# {
-#   # TODO: Query emojis ordered by currentPrice DESC
-#   # TODO: Query events ordered by createdAt DESC (limit 15)
-# }
+query GetDashboardData
+@auth(
+  level: PUBLIC
+  insecureReason: "This operation is safe to expose to the public."
+) {
+  emojis(orderBy: [{ currentPrice: DESC }]) {
+    id
+    symbol
+    name
+    description
+    currentPrice
+    trend
+  }
+  events(orderBy: [{ createdAt: DESC }], limit: 15) {
+    id
+    description
+    impact
+    createdAt
+    user {
+      username
+      profileImage
+    }
+    emoji {
+      symbol
+    }
+  }
+}
 
 # Get current authenticated user profile and their stock ownership using auth.uid
-# query GetUserProfile @auth(level: USER)
-# # TODO: Add @refresh directives
-# {
-#   # TODO: Query user by auth.uid and nested stockOwnerships_on_user
-# }
+query GetUserProfile @auth(level: USER) {
+  user(id_expr: "auth.uid") {
+    points
+    username
+    profileImage
+    role
+    stockOwnerships_on_user {
+      shares
+      emoji {
+        id
+        symbol
+        currentPrice
+        name
+      }
+    }
+    city
+    latitude
+    longitude
+  }
+}
 
 # Get price history for a specific emoji ordered by time
-# query GetPriceHistory($emojiId: UUID!, $limit: Int)
-# @auth(level: PUBLIC, insecureReason: "This operation is safe to expose to the public.")
-# # TODO: Add @refresh directives
-# {
-#   # TODO: Query priceHistories where emojiId matches, ordered by recordedAt ASC
-# }
+query GetPriceHistory($emojiId: UUID!, $limit: Int)
+@auth(
+  level: PUBLIC
+  insecureReason: "This operation is safe to expose to the public."
+) {
+  priceHistories(
+    where: { emojiId: { eq: $emojiId } }
+    orderBy: [{ recordedAt: ASC }]
+    limit: $limit
+  ) {
+    price
+    recordedAt
+  }
+}
+
 
 # Get emoji whale statistics to identify top shareholders from emojiWhaleStats view
-# query GetEmojiWhaleStats
-# @auth(level: PUBLIC, insecureReason: "This operation is safe to expose to the public.")
-# # TODO: Add @refresh directives
-# {
-#   # TODO: Query emojiWhaleStats
-# }
+query GetEmojiWhaleStats
+@auth(
+  level: PUBLIC
+  insecureReason: "This operation is safe to expose to the public."
+) {
+  emojiWhaleStats {
+    emojiId
+    whaleUsername
+    whaleProfileImage
+    whaleShares
+    totalSupply
+    whalePercentage
+  }
+}
 
 # Get historical price and moving average stats for a specific emoji from emojiHistoryStats view
-# query GetEmojiHistoryStats($emojiId: UUID!)
-# @auth(level: PUBLIC, insecureReason: "This operation is safe to expose to the public.")
-# # TODO: Add @refresh directives
-# {
-#   # TODO: Query emojiHistoryStats where emojiId matches
-# }
-
-# Get chronological market ticker feed of recent events from tickerFeeds view
-# query GetChronologicalTicker
-# @auth(level: PUBLIC, insecureReason: "This operation is safe to expose to the public.")
-# # TODO: Add @refresh directives
-# {
-#   # TODO: Query tickerFeeds ordered by eventTime DESC (limit 30)
-# }
-
-# Get simple price points for rendering emoji sparkline charts from emojiSparklines view
-# query GetEmojiSparklines
-# @auth(level: PUBLIC, insecureReason: "This operation is safe to expose to the public.")
-# # TODO: Add @refresh directives
-# {
-#   # TODO: Query emojiSparklines
-# }
+query GetEmojiHistoryStats($emojiId: UUID!)
+@auth(
+  level: PUBLIC
+  insecureReason: "This operation is safe to expose to the public."
+) {
+  emojiHistoryStats(
+    where: { emojiId: { eq: $emojiId } }
+    orderBy: [{ recordedAt: ASC }]
+    limit: 50
+  ) {
+    price
+    movingAverage
+    recordedAt
+  }
+}
 
 # List top traders ordered by rank from topTraders view
-# query GetTopTraders
-# @auth(level: PUBLIC, insecureReason: "This operation is safe to expose to the public.")
-# # TODO: Add @refresh directives
-# {
-#   # TODO: Query topTraders ordered by rank ASC
-# }
+query GetTopTraders
+@auth(
+  level: PUBLIC
+  insecureReason: "This operation is safe to expose to the public."
+) {
+  topTraders(orderBy: [{ rank: ASC }]) {
+    id
+    username
+    profileImage
+    netWorth
+    rank
+  }
+}
+
+# Get chronological market ticker feed of recent events from tickerFeeds view
+query GetChronologicalTicker
+@auth(
+  level: PUBLIC
+  insecureReason: "This operation is safe to expose to the public."
+) {
+  tickerFeeds(orderBy: [{ eventTime: DESC }], limit: 30) {
+    type
+    symbol
+    name
+    currentPrice
+    trend
+    description
+    eventTime
+  }
+}
+
+# Get simple price points for rendering emoji sparkline charts from emojiSparklines view
+query GetEmojiSparklines
+@auth(
+  level: PUBLIC
+  insecureReason: "This operation is safe to expose to the public."
+) {
+  emojiSparklines {
+    emojiId
+    price
+    recordedAt
+  }
+}
+
 
 # Search emojis using full-text search query
-# query SearchEmojis($query: String)
-# @auth(level: PUBLIC, insecureReason: "This operation is safe to expose to the public.")
-# # TODO: Add @refresh directives
-# {
-#   # TODO: Query emojis_search with $query
-# }
+query SearchEmojis($query: String)
+@auth(
+  level: PUBLIC
+  insecureReason: "This operation is safe to expose to the public."
+) {
+  emojis_search(query: $query) {
+    id
+    symbol
+    name
+    description
+    currentPrice
+    trend
+  }
+}
 
 # Get top trending emojis partitioned by user city using native SQL
 # query GetTopEmojisByCity

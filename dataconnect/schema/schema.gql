@@ -13,60 +13,59 @@
 # limitations under the License.
 #
 
-
 # Users
 # user-stockOwnership is a one-to-many relationship, user-events is a one-to-many relationship
 # Utilizes the Firebase Auth uid expression as the primary key
-# TODO: Define User type with @table directive.
 type User @table {
   id: String! @default(expr: "auth.uid")
-
+  username: String!
+  profileImage: String
+  role: String! @default(value: "USER")
+  points: Float! @default(value: 100.0)
+  city: String @default(value: "Las Vegas")
+  latitude: Float @default(value: 36.1699)
+  longitude: Float @default(value: -115.1398)
 }
 
 # Emojis
 # emoji-stockOwnership is a one-to-many relationship, emoji-priceHistory is a one-to-many relationship
 # Implements @searchable directives for full-text search
-# Optional: implements Vector type for semantic search
-# TODO: Define Emoji type with @table directive.
-# type Emoji @table {
-#   id: UUID! @default(expr: "uuidV4()")
-#   symbol: String!
-#   name: String! @searchable
-#   tags: [String!]
-#   description: String! @searchable
-#   currentPrice: Float! @default(value: 10.0)
-#   trend: Float! @default(value: 0.0)
-# }
+type Emoji @table {
+  id: UUID! @default(expr: "uuidV4()")
+  symbol: String!
+  name: String! @searchable
+  tags: [String!]
+  description: String! @searchable
+  currentPrice: Float! @default(value: 10.0)
+  trend: Float! @default(value: 0.0)
+}
 
 # Join table for many-to-many relationship between users and emojis
 # The 'key' param signifies the primary key(s) of this table
-# In this case, the keys are [userId, emojiId], the generated fields of the reference types [user, emoji]
-# TODO: Define StockOwnership join table between User and Emoji.
-# type StockOwnership @table(key: ["user", "emoji"]) {
-#   user: User!
-#   emoji: Emoji!
-#   shares: Int! @default(value: 0)
-# }
+# In this case, the keys are [user, emoji], the generated fields of the reference types
+type StockOwnership @table(key: ["user", "emoji"]) {
+  user: User!
+  emoji: Emoji!
+  shares: Int! @default(value: 0)
+}
 
 # Events
 # Event-User is a many-to-one relationship, Event-Emoji is a many-to-one relationship
 # Evaluates the createdAt timestamp purely on the server side using the request.time expression
-# TODO: Define Event type with @table directive.
-# type Event @table {
-#   id: UUID! @default(expr: "uuidV4()")
-#   user: User!
-#   emoji: Emoji!
-#   impact: Float!
-#   description: String!
-#   createdAt: Timestamp! @default(expr: "request.time")
-# }
+type Event @table {
+  id: UUID! @default(expr: "uuidV4()")
+  user: User!
+  emoji: Emoji!
+  impact: Float!
+  description: String!
+  createdAt: Timestamp! @default(expr: "request.time")
+}
 
 # Price History
 # PriceHistory-Emoji is a many-to-one relationship
-# TODO: Define PriceHistory type with @table directive.
-# type PriceHistory @table {
-#   id: UUID! @default(expr: "uuidV4()")
-#   emoji: Emoji!
-#   price: Float!
-#   recordedAt: Timestamp! @default(expr: "request.time")
-# }
+type PriceHistory @table {
+  id: UUID! @default(expr: "uuidV4()")
+  emoji: Emoji!
+  price: Float!
+  recordedAt: Timestamp! @default(expr: "request.time")
+}

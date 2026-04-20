@@ -21,15 +21,10 @@ import {
 } from "firebase-functions/dataconnect/graphql";
 import { initializeApp, getApps } from "firebase-admin/app";
 import { GoogleGenAI } from "@google/genai";
-import { defineSecret } from "firebase-functions/params";
-import { executeReadXPostTransaction } from "@dataconnect/generated";
-
-const XToken = defineSecret("X_TOKEN");
 
 setGlobalOptions({
   maxInstances: 10,
   region: "us-west4",
-  secrets: [XToken],
 });
 
 if (getApps().length === 0) {
@@ -38,7 +33,7 @@ if (getApps().length === 0) {
 
 const ai = new GoogleGenAI({
   vertexai: true,
-  project: process.env.GCLOUD_PROJECT || "n26-sql-connect",
+  project: process.env.GCLOUD_PROJECT || "your-app-id",
   location: process.env.GCLOUD_LOCATION || "us-west4",
 });
 
@@ -63,19 +58,10 @@ const headlineOpts = {
         } = args;
 
         try {
-          const prompt = `You are a hype-driven, satirical financial news bot. 
-          A user named '${username}' just executed a massive ${tradeType} of ${tradeAmount} shares of ${emojiSymbol} (${emojiName}) for $${tradeCost}. 
-          Write a single, punchy, dramatic news headline (under 12 words) about this market move, use puns wherever possible, but don't round or exagerate the numbers. Include the asset symbol.`;
-          const response = await ai.models.generateContent({
-            model: "gemini-2.5-flash-lite",
-            contents: prompt,
-          });
-
-          if (!response.text) {
-            throw new Error("No text returned from Vertex AI");
-          }
-
-          return response.text.trim();
+          // TODO: Construct a prompt and call ai.models.generateContent() to generate a satirical headline.
+          // Return the generated text string.
+          
+          return `BREAKING: Massive ${tradeType} detected on ${emojiSymbol}! Market reacting.`;
         } catch (error) {
           console.error("Vertex AI generation failed:", error);
           return `BREAKING: Massive ${tradeType} detected on ${emojiSymbol}! Market reacting.`;
@@ -85,91 +71,4 @@ const headlineOpts = {
   },
 };
 
-const extractEmoji = (text: string) => {
-  const emojiRegex = /[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu;
-  const match = emojiRegex.exec(text);
-  return match ? match[0] : null;
-};
-
-const readXopts = {
-  schemaFilePath: "dataconnect/schema_readXpost/schema.gql",
-  resolvers: {
-    mutation: {
-      // Validate an X.com post to apply a random price boost to an emoji stock
-      async boostFromTweet(
-        _parent: unknown,
-        args: Record<string, unknown>,
-        _contextValue: FirebaseContext,
-        _info: unknown,
-      ) {
-        const tweetUrl = args.tweetUrl as string;
-        const userId = args.userId as string;
-
-        const tweetIdMatch = tweetUrl.match(/\/status\/(\d+)/);
-        if (!tweetIdMatch) return { success: false, message: "Invalid X URL." };
-        const tweetId = tweetIdMatch[1];
-
-        try {
-          const response = await fetch(
-            `https://api.x.com/2/tweets/${tweetId}`,
-            {
-              headers: { Authorization: `Bearer ${XToken.value()}` },
-            },
-          );
-
-          if (!response.ok) throw new Error("API Fetch Failed");
-          const json = await response.json();
-
-          if (!json.data || !json.data.text) {
-            return { success: false, message: "Post not found or is private." };
-          }
-
-          const text = json.data.text;
-
-          if (!text.toLowerCase().includes("#firebasesqlconnect")) {
-            return {
-              success: false,
-              message: "Missing #FirebaseSQLConnect tag.",
-            };
-          }
-
-          const symbol = extractEmoji(text);
-          if (!symbol) {
-            return { success: false, message: "No emoji found in tweet." };
-          }
-
-          const boostAmount = Number((Math.random() * (7 - 2) + 2).toFixed(2));
-
-          // executeReadXPostTransaction mutation is explicitly called here using the generated SDK
-          const transactionResult = await executeReadXPostTransaction({ 
-            symbol: symbol, 
-            boostAmount: boostAmount,
-            tweetId: tweetId,
-            userId: userId 
-          });
-
-          const rows = transactionResult.data?.readXPost as any[] | undefined;
-
-          if (!rows || rows.length === 0) {
-            return {
-              success: false,
-              message: `Emoji ${symbol} is not listed on the exchange, you have used your 3 attempts, or this X post has already been claimed!".`,
-            };
-          }
-          return {
-            success: true,
-            symbol,
-            boostAmount,
-            message: "Boost applied!",
-          };
-        } catch (error: any) {
-          console.error("X Post Error:", error);
-          return { success: false, message: "Internal X Post Error" };
-        }
-      },
-    },
-  },
-};
-
-export const readXpost = onGraphRequest(readXopts);
 export const generateTradeHeadline = onGraphRequest(headlineOpts);

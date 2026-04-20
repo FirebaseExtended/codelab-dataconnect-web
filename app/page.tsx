@@ -24,14 +24,14 @@ import TickerList from "../components/TickerList";
 import { useToast } from "@/lib/ToastContext";
 import { executeBuyStock, executeSellStock } from "../lib/ExchangeService";
 
-import { subscribe } from "@firebase/data-connect";
-import {
-  getDashboardDataRef,
-  searchEmojisRef,
-  vectorSearchEmojisRef,
-  getChronologicalTickerRef,
-  getUserProfileRef,
-} from "@dataconnect/generated";
+// import { subscribe } from "@firebase/data-connect";
+// import {
+//   getDashboardDataRef,
+//   searchEmojisRef,
+//   vectorSearchEmojisRef,
+//   getChronologicalTickerRef,
+//   getUserProfileRef,
+// } from "@dataconnect/generated";
 
 export default function Home() {
   const [dashboardData, setDashboardData] = useState<any>(null);
@@ -60,44 +60,17 @@ export default function Home() {
   const { showToast } = useToast();
 
   useEffect(() => {
-    // Subscribe to realtime updates for the main market dashboard data including top emojis and recent events
-    const unsubscribe = subscribe(
-      getDashboardDataRef(),
-      (res) => {
-        if (res.data) setDashboardData(res.data);
-        setIsDashboardLoading(false);
-      },
-      (err) => {
-        console.error("Dashboard Realtime Error:", err);
-        setIsDashboardLoading(false);
-      },
-    );
-    return () => unsubscribe();
+    // TODO: Subscribe to realtime updates for the main market dashboard data (getDashboardDataRef)
+    setIsDashboardLoading(false);
   }, [user]);
 
   useEffect(() => {
-    // Subscribe to a realtime chronological ticker feed combining recent price updates and major news events
-    const unsubscribe = subscribe(
-      getChronologicalTickerRef(),
-      (res) => {
-        if (res.data) setTickerData(res.data);
-      },
-      (err) => console.error("Ticker Realtime Error:", err),
-    );
-    return () => unsubscribe();
+    // TODO: Subscribe to a realtime chronological ticker feed (getChronologicalTickerRef)
   }, []);
 
   useEffect(() => {
     if (loading || !user) return;
-    // Subscribe to realtime updates for the authenticated user's profile and stock ownership
-    const unsubscribe = subscribe(
-      getUserProfileRef(),
-      (res) => {
-        if (res.data) setProfileData(res.data);
-      },
-      (err) => console.error("Profile Error:", err),
-    );
-    return () => unsubscribe();
+    // TODO: Subscribe to realtime updates for the authenticated user's profile (getUserProfileRef)
   }, [user, loading]);
 
   useEffect(() => {
@@ -106,48 +79,14 @@ export default function Home() {
       return;
     }
 
-    let unsubscribe: () => void;
-
     if (searchMode === "TEXT") {
-      // Subscribe to realtime full-text search results for emojis based on user input
-      unsubscribe = subscribe(
-        searchEmojisRef({ query: debouncedSearch }),
-        (res) => {
-          if (res.data) setSearchData(res.data.emojis_search);
-          setIsSearchLoading(false);
-        },
-        (err) => {
-          console.error("Text Search Error:", err);
-          setIsSearchLoading(false);
-        },
-      );
+      // TODO: Subscribe to realtime full-text search results for emojis (searchEmojisRef)
+      setIsSearchLoading(false);
     } else {
-      // Subscribe to realtime vector search results using semantic similarity for emojis based on user input
-      unsubscribe = subscribe(
-        vectorSearchEmojisRef({ query: debouncedSearch }),
-        (res) => {
-          if (res.data)
-            setSearchData(res.data.emojis_descriptionEmbedding_similarity);
-          setIsSearchLoading(false);
-        },
-        (err) => {
-          console.error("Vector Search Error:", err);
-          setIsSearchLoading(false);
-        },
-      );
+      // TODO: Subscribe to realtime vector search results using semantic similarity (vectorSearchEmojisRef)
+      setIsSearchLoading(false);
     }
-
-    return () => {
-      if (unsubscribe) unsubscribe();
-    };
   }, [debouncedSearch, searchMode]);
-
-  useEffect(() => {
-    const keywords = ["food", "animal", "face", "nature", "sports", "tech"];
-    setFlashKeyword(keywords[Math.floor(Math.random() * keywords.length)]);
-    logEvent("DASHBOARD_SUB");
-    logEvent("TICKER_SUB");
-  }, [logEvent]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -160,6 +99,13 @@ export default function Home() {
     }, 300);
     return () => clearTimeout(timer);
   }, [searchTerm, searchMode, logEvent]);
+
+  useEffect(() => {
+    const keywords = ["food", "animal", "face", "nature", "sports", "tech"];
+    setFlashKeyword(keywords[Math.floor(Math.random() * keywords.length)]);
+    logEvent("DASHBOARD_SUB");
+    logEvent("TICKER_SUB");
+  }, [logEvent]);
 
   const sortedEvents = useMemo(() => {
     if (!dashboardData?.events) return [];

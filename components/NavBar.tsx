@@ -25,22 +25,14 @@ import { useInspector } from "../lib/InspectorContext";
 import ThemeToggle from "./ThemeToggle";
 import { executeUpsertUser } from "../lib/ExchangeService";
 
-import { subscribe } from "@firebase/data-connect";
-import { getUserProfileRef } from "@dataconnect/generated";
+// import { subscribe } from "@firebase/data-connect";
+// import { getUserProfileRef } from "@dataconnect/generated";
 
 const UserBalance = ({ mobile = false }: { mobile?: boolean }) => {
   const [data, setData] = useState<any>(null);
 
   useEffect(() => {
-    // Subscribe to realtime updates for the authenticated user's profile and stock ownership
-    const unsub = subscribe(
-      getUserProfileRef(),
-      (res) => {
-        if (res.data) setData(res.data);
-      },
-      (err) => console.error("Navbar Balance Realtime Error:", err),
-    );
-    return () => unsub();
+    // TODO: Subscribe to realtime updates for the authenticated user's profile (getUserProfileRef)
   }, []);
 
   const netWorth = useMemo(() => {
@@ -96,7 +88,7 @@ export default function Navbar() {
   const { isOpen, logs } = useInspector();
   const [isSyncing, setIsSyncing] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const { logEvent } = useInspector();
+  const { logEvent } = useInspector();
 
   const handleLogin = async () => {
     try {
@@ -107,7 +99,7 @@ export default function Navbar() {
       await executeUpsertUser(
         cred.user.displayName || "Anonymous",
         cred.user.photoURL || "",
-        logEvent
+        logEvent,
       );
     } catch (error) {
       console.error("Login/Sync Error:", error);

@@ -14,167 +14,172 @@
 #
 
 # Rank users on a leaderboard based on their total net worth
-type TopTrader
-@view(
-  sql: """
-  SELECT
-    u.id, 
-    u.username,
-    u.profile_image,
-    (u.points + COALESCE(SUM(so.shares * e.current_price), 0)) AS net_worth,
-    RANK() OVER (ORDER BY (u.points + COALESCE(SUM(so.shares * e.current_price), 0)) DESC) AS rank
-  FROM "user" u
-  LEFT JOIN stock_ownership so ON u.id = so.user_id
-  LEFT JOIN emoji e ON so.emoji_id = e.id
-  WHERE u.id != 'system_market_maker'
-  GROUP BY u.id, u.username, u.profile_image, u.points
-  """
-) {
-  id: String
-  username: String
-  profileImage: String
-  netWorth: Float
-  rank: Int
-}
+# TODO: Define TopTrader type with @view directive and SQL query.
+# type TopTrader
+# @view(
+#   sql: """
+#   SELECT
+#     u.id, 
+#     u.username,
+#     u.profile_image,
+#     (u.points + COALESCE(SUM(so.shares * e.current_price), 0)) AS net_worth,
+#     RANK() OVER (ORDER BY (u.points + COALESCE(SUM(so.shares * e.current_price), 0)) DESC) AS rank
+#   FROM "user" u
+#   LEFT JOIN stock_ownership so ON u.id = so.user_id
+#   LEFT JOIN emoji e ON so.emoji_id = e.id
+#   WHERE u.id != 'system_market_maker'
+#   GROUP BY u.id, u.username, u.profile_image, u.points
+#   """
+# ) {
+#   id: String
+#   username: String
+#   profileImage: String
+#   netWorth: Float
+#   rank: Int
+# }
 
 # Identify the top shareholder (whale) for each emoji and their total ownership percentage
-type EmojiWhaleStat
-  @view(
-    sql: """
-    WITH total_shares AS (
-      SELECT
-        emoji_id,
-        SUM(shares) AS total_supply
-      FROM stock_ownership
-      WHERE shares > 0
-      GROUP BY emoji_id
-    ),
-    ranked_holders AS (
-      SELECT
-        so.emoji_id,
-        u.username              AS whale_username,
-        u.profile_image         AS whale_profile_image,
-        so.shares               AS whale_shares,
-        ts.total_supply,
-        ROUND(
-          (so.shares::DECIMAL / NULLIF(ts.total_supply, 0)) * 100,
-          2
-        )                       AS whale_percentage,
-        RANK() OVER (
-          PARTITION BY so.emoji_id
-          ORDER BY so.shares DESC
-        )                       AS holder_rank
-      FROM stock_ownership so
-      JOIN "user" u ON u.id = so.user_id
-      JOIN total_shares ts ON ts.emoji_id = so.emoji_id
-      WHERE so.shares > 0
-    )
-    SELECT
-      emoji_id,
-      whale_username,
-      whale_profile_image,
-      whale_shares,
-      total_supply,
-      whale_percentage
-    FROM ranked_holders
-    WHERE holder_rank = 1
-    """
-  ) {
-  emojiId: UUID
-  whaleUsername: String
-  whaleProfileImage: String
-  whaleShares: Int
-  totalSupply: Int
-  whalePercentage: Float
-}
+# TODO: Define EmojiWhaleStat type with @view directive and SQL query.
+# type EmojiWhaleStat
+#   @view(
+#     sql: """
+#     WITH total_shares AS (
+#       SELECT
+#         emoji_id,
+#         SUM(shares) AS total_supply
+#       FROM stock_ownership
+#       WHERE shares > 0
+#       GROUP BY emoji_id
+#     ),
+#     ranked_holders AS (
+#       SELECT
+#         so.emoji_id,
+#         u.username              AS whale_username,
+#         u.profile_image         AS whale_profile_image,
+#         so.shares               AS whale_shares,
+#         ts.total_supply,
+#         ROUND(
+#           (so.shares::DECIMAL / NULLIF(ts.total_supply, 0)) * 100,
+#           2
+#         )                       AS whale_percentage,
+#         RANK() OVER (
+#           PARTITION BY so.emoji_id
+#           ORDER BY so.shares DESC
+#         )                       AS holder_rank
+#       FROM stock_ownership so
+#       JOIN "user" u ON u.id = so.user_id
+#       JOIN total_shares ts ON ts.emoji_id = so.emoji_id
+#       WHERE so.shares > 0
+#     )
+#     SELECT
+#       emoji_id,
+#       whale_username,
+#       whale_profile_image,
+#       whale_shares,
+#       total_supply,
+#       whale_percentage
+#     FROM ranked_holders
+#     WHERE holder_rank = 1
+#     """
+#   ) {
+#   emojiId: UUID
+#   whaleUsername: String
+#   whaleProfileImage: String
+#   whaleShares: Int
+#   totalSupply: Int
+#   whalePercentage: Float
+# }
 
 # Calculate the moving average of historical prices for each emoji
-type EmojiHistoryStat
-  @view(
-    sql: """
-    SELECT
-      emoji_id,
-      price,
-      recorded_at,
-      AVG(price) OVER (
-        PARTITION BY emoji_id
-        ORDER BY recorded_at
-        ROWS BETWEEN 4 PRECEDING AND CURRENT ROW
-      ) as moving_average
-    FROM price_history
-    """
-  ) {
-  emojiId: UUID
-  price: Float
-  recordedAt: Timestamp
-  movingAverage: Float
-}
+# TODO: Define EmojiHistoryStat type with @view directive and SQL query.
+# type EmojiHistoryStat
+#   @view(
+#     sql: """
+#     SELECT
+#       emoji_id,
+#       price,
+#       recorded_at,
+#       AVG(price) OVER (
+#         PARTITION BY emoji_id
+#         ORDER BY recorded_at
+#         ROWS BETWEEN 4 PRECEDING AND CURRENT ROW
+#       ) as moving_average
+#     FROM price_history
+#     """
+#   ) {
+#   emojiId: UUID
+#   price: Float
+#   recordedAt: Timestamp
+#   movingAverage: Float
+# }
 
 # Combine recent price updates and major news events into a single chronological feed
-type TickerFeed
-  @view(
-    sql: """
-    WITH latest_prices AS (
-      SELECT
-        emoji_id,
-        MAX(recorded_at) as last_trade_time
-      FROM price_history
-      GROUP BY emoji_id
-    )
-    SELECT
-      'PRICE' as type,
-      e.symbol,
-      e.name,
-      e.current_price,
-      e.trend,
-      '' as description,
-      lp.last_trade_time as event_time
-    FROM emoji e
-    JOIN latest_prices lp ON e.id = lp.emoji_id
+# TODO: Define TickerFeed type with @view directive and SQL query.
+# type TickerFeed
+#   @view(
+#     sql: """
+#     WITH latest_prices AS (
+#       SELECT
+#         emoji_id,
+#         MAX(recorded_at) as last_trade_time
+#       FROM price_history
+#       GROUP BY emoji_id
+#     )
+#     SELECT
+#       'PRICE' as type,
+#       e.symbol,
+#       e.name,
+#       e.current_price,
+#       e.trend,
+#       '' as description,
+#       lp.last_trade_time as event_time
+#     FROM emoji e
+#     JOIN latest_prices lp ON e.id = lp.emoji_id
 
-    UNION ALL
+#     UNION ALL
 
-    SELECT
-      'NEWS' as type,
-      e.symbol,
-      '' as name,
-      0 as current_price,
-      0 as trend,
-      ev.description,
-      ev.created_at as event_time
-    FROM event ev
-    JOIN emoji e ON ev.emoji_id = e.id
-    WHERE ev.description ILIKE '%GEMINI REPORT%' OR ev.description ILIKE '%MARKET CRASH%'
-    """
-  ) {
-  type: String
-  symbol: String
-  name: String
-  currentPrice: Float
-  trend: Float
-  description: String
-  eventTime: Timestamp
-}
+#     SELECT
+#       'NEWS' as type,
+#       e.symbol,
+#       '' as name,
+#       0 as current_price,
+#       0 as trend,
+#       ev.description,
+#       ev.created_at as event_time
+#     FROM event ev
+#     JOIN emoji e ON ev.emoji_id = e.id
+#     WHERE ev.description ILIKE '%GEMINI REPORT%' OR ev.description ILIKE '%MARKET CRASH%'
+#     """
+#   ) {
+#   type: String
+#   symbol: String
+#   name: String
+#   currentPrice: Float
+#   trend: Float
+#   description: String
+#   eventTime: Timestamp
+# }
 
 # Retrieve the 15 most recent price points for each emoji to render sparkline charts
-type EmojiSparkline
-  @view(
-    sql: """
-    WITH RankedPrices AS (
-      SELECT
-        emoji_id,
-        price,
-        recorded_at,
-        ROW_NUMBER() OVER(PARTITION BY emoji_id ORDER BY recorded_at DESC) as rn
-      FROM price_history
-    )
-    SELECT emoji_id, price, recorded_at
-    FROM RankedPrices
-    WHERE rn <= 15
-    ORDER BY recorded_at ASC
-    """
-  ) {
-  emojiId: UUID
-  price: Float
-  recordedAt: Timestamp
-}
+# TODO: Define EmojiSparkline type with @view directive and SQL query.
+# type EmojiSparkline
+#   @view(
+#     sql: """
+#     WITH RankedPrices AS (
+#       SELECT
+#         emoji_id,
+#         price,
+#         recorded_at,
+#         ROW_NUMBER() OVER(PARTITION BY emoji_id ORDER BY recorded_at DESC) as rn
+#       FROM price_history
+#     )
+#     SELECT emoji_id, price, recorded_at
+#     FROM RankedPrices
+#     WHERE rn <= 15
+#     ORDER BY recorded_at ASC
+#     """
+#   ) {
+#   emojiId: UUID
+#   price: Float
+#   recordedAt: Timestamp
+# }

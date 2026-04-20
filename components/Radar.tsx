@@ -36,27 +36,9 @@ export default function LocalRadar() {
 
   useEffect(() => {
     if (!location) return;
-
     setIsLoadingTrends(true);
-
-    // Subscribe to realtime updates for trending emojis within a 50km radius
-    const unsub = subscribe(
-      getTrendingEmojisNearMeRef({
-        userLat: location.lat,
-        userLng: location.lng,
-        radiusMeters: 50000, // 50km
-      }),
-      (res) => {
-        if (res.data) setLocalData(res.data);
-        setIsLoadingTrends(false);
-      },
-      (err) => {
-        console.error("Local Radar Realtime Error:", err);
-        setIsLoadingTrends(false);
-      },
-    );
-
-    return () => unsub();
+    // TODO: Subscribe to realtime updates for trending emojis within a 50km radius (getTrendingEmojisNearMeRef)
+    setIsLoadingTrends(false);
   }, [location?.lat, location?.lng]);
 
   const handleScanNetwork = () => {

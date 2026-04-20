@@ -21,17 +21,15 @@ import { useInspector } from "../lib/InspectorContext";
 import { useToast } from "@/lib/ToastContext";
 import {
   executeManualBotTrade,
-  executeSocialBoost,
   executeUpdateRole,
 } from "../lib/ExchangeService";
 
-import { subscribe } from "@firebase/data-connect";
-import { useGetDashboardData } from "@dataconnect/generated/react";
-import { getUserProfileRef } from "@dataconnect/generated";
+// import { subscribe } from "@firebase/data-connect";
+// import { useGetDashboardData } from "@dataconnect/generated/react";
+// import { getUserProfileRef } from "@dataconnect/generated";
 
 export default function FloatingMenu() {
   const { user } = useAuth();
-  const { data, refetch: refetchDashboard } = useGetDashboardData();
   const { logEvent } = useInspector();
   const { showToast } = useToast();
 
@@ -41,20 +39,15 @@ export default function FloatingMenu() {
   const [profileData, setProfileData] = useState<any>(null);
   const [optimisticRole, setOptimisticRole] = useState<string | null>(null);
 
-  const [selectedEmojiId, setSelectedEmojiId] = useState("");
-  const [tweetUrl, setTweetUrl] = useState("");
+  // TODO: Replace with useGetDashboardData() generated hook
+  const { data, refetch: refetchDashboard } = {
+    data: null as any,
+    refetch: () => {},
+  };
 
   useEffect(() => {
     if (!user) return;
-    
-    // Subscribe to realtime updates for the authenticated user's profile
-    const unsub = subscribe(getUserProfileRef(), (res) => {
-      if (res.data) {
-        setProfileData(res.data);
-        setOptimisticRole(null);
-      }
-    });
-    return () => unsub();
+    // TODO: Subscribe to realtime updates for the authenticated user's profile (getUserProfileRef)
   }, [user]);
 
   const userRole = optimisticRole || profileData?.user?.role || "USER";
@@ -99,48 +92,6 @@ export default function FloatingMenu() {
       showToast(err.message, "error");
     } finally {
       setIsProcessing(false);
-    }
-  };
-
-  const handleSocialBoost = async () => {
-    if (!tweetUrl) return;
-    setIsProcessing(true);
-
-    try {
-      // Trigger a market price boost for an emoji based on an X.com post URL
-      const res = await executeSocialBoost(tweetUrl, user!.uid);
-
-      if (res.data?.boostFromTweet?.success) {
-        logEvent("SOCIAL_BOOST_SUCCESS", {
-          symbol: res.data.boostFromTweet.symbol,
-          boost: res.data.boostFromTweet.boostAmount,
-        });
-        showToast(
-          `Trend detected! ${res.data.boostFromTweet.symbol} boosted.`,
-          "success",
-        );
-        setTweetUrl("");
-        setSelectedEmojiId("");
-        refetchDashboard();
-      } else {
-        throw new Error(res.data?.boostFromTweet?.message || "URL rejected.");
-      }
-    } catch (err: any) {
-      showToast(err.message, "error");
-    } finally {
-      setIsProcessing(false);
-    }
-  };
-
-  const selectedEmoji = data?.emojis?.find((e) => e.id === selectedEmojiId);
-  const generatedTweet = selectedEmoji
-    ? `Go ${selectedEmoji.symbol}! \n#GoogleCloudNext #FirebaseSQLConnect`
-    : "";
-
-  const handleCopyTweet = () => {
-    if (generatedTweet) {
-      navigator.clipboard.writeText(generatedTweet);
-      showToast("Tweet copied to clipboard!", "success");
     }
   };
 
@@ -201,63 +152,6 @@ export default function FloatingMenu() {
               >
                 Trigger random market activity
               </button>
-            </div>
-          </div>
-
-          <div className="border-t border-gray-200 dark:border-[#333] pt-4">
-            <div className="flex justify-between items-center mb-3">
-              <h3 className="text-sm font-bold text-fuchsia-600 dark:text-fuchsia-500">
-                Social Boost
-              </h3>
-              <span className="text-[9px] bg-fuchsia-50 dark:bg-fuchsia-500/20 text-fuchsia-600 dark:text-fuchsia-400 px-1.5 py-0.5 rounded border border-fuchsia-200 dark:border-fuchsia-500/30">
-                Custom Resolver
-              </span>
-            </div>
-
-            <div className="flex flex-col gap-3">
-              <select
-                value={selectedEmojiId}
-                onChange={(e) => setSelectedEmojiId(e.target.value)}
-                className="w-full p-2.5 rounded-md bg-gray-50 dark:bg-[#0a0a0a] border border-gray-300 dark:border-[#333] text-sm outline-none focus:border-fuchsia-500 text-gray-900 dark:text-white"
-              >
-                <option value="">Select Emoji</option>
-                {data?.emojis?.map((emoji) => (
-                  <option key={emoji.id} value={emoji.id}>
-                    {emoji.symbol} {emoji.name}
-                  </option>
-                ))}
-              </select>
-
-              {selectedEmoji && (
-                <div className="bg-fuchsia-50 dark:bg-fuchsia-500/5 border border-fuchsia-200 dark:border-fuchsia-500/20 rounded-md p-3 flex flex-col gap-2">
-                  <p className="text-sm font-mono text-gray-700 dark:text-gray-300 whitespace-pre-wrap leading-tight">
-                    {generatedTweet}
-                  </p>
-                  <button
-                    onClick={handleCopyTweet}
-                    className="self-end text-[10px] uppercase tracking-widest font-bold text-fuchsia-600 dark:text-fuchsia-400 hover:text-fuchsia-800 dark:hover:text-fuchsia-300 transition-colors"
-                  >
-                    Copy to Clipboard
-                  </button>
-                </div>
-              )}
-
-              <div className="mt-2 border-t border-gray-200 dark:border-[#333] pt-3 flex flex-col gap-2">
-                <input
-                  type="text"
-                  value={tweetUrl}
-                  onChange={(e) => setTweetUrl(e.target.value)}
-                  placeholder="Paste published X.com URL..."
-                  className="w-full p-2.5 rounded-md bg-gray-50 dark:bg-[#0a0a0a] border border-gray-300 dark:border-[#333] text-sm font-mono outline-none focus:border-fuchsia-500 placeholder-gray-400 dark:placeholder-gray-600"
-                />
-                <button
-                  onClick={handleSocialBoost}
-                  disabled={isProcessing || !tweetUrl}
-                  className="w-full bg-fuchsia-600 text-white font-semibold text-sm px-3 py-2.5 rounded-md hover:bg-fuchsia-500 transition-colors disabled:opacity-50 shadow-md dark:shadow-[0_0_15px_rgba(192,38,211,0.4)]"
-                >
-                  {isProcessing ? "Verifying..." : "Trigger Social Boost"}
-                </button>
-              </div>
             </div>
           </div>
         </div>

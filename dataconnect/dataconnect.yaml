@@ -8,15 +8,10 @@ schemas:
         database: your-project-id-database
         cloudSql:
           instanceId: your-project-id-instance
-  - source: ./schema_readXpost
-    id: readXpost
-    datasource:
-      httpGraphql:
-        uri: https://readxpost-your-project-id.your-region.run.app/graphql
-  - source: ./schema_generateTradeHeadline
-    id: generateTradeHeadline
-    datasource:
-      httpGraphql:
-        uri: https://generatetradeheadline-your-project-id.your-region.run.app/graphql
+  # - source: ./schema_generateTradeHeadline
+  #   id: generateTradeHeadline
+  #   datasource:
+  #     httpGraphql:
+  #       uri: https://generatetradeheadline-your-project-id.your-region.run.app/graphql
 connectorDirs:
   - ./friendly-exchange

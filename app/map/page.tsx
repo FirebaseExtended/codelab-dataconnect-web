@@ -21,12 +21,12 @@ import { useTheme } from "next-themes";
 import { useInspector } from "../../lib/InspectorContext";
 import { useToast } from "@/lib/ToastContext";
 
-import { subscribe } from "@firebase/data-connect";
-import {
-  getTopEmojisByCityRef,
-  getTrendingEmojisNearMeRef,
-  getUserProfileRef,
-} from "@dataconnect/generated";
+// import { subscribe } from "@firebase/data-connect";
+// import {
+//   getTopEmojisByCityRef,
+//   getTrendingEmojisNearMeRef,
+//   getUserProfileRef,
+// } from "@dataconnect/generated";
 
 export default function InsightsPage() {
   const { logEvent, isOpen, logs } = useInspector();
@@ -57,36 +57,17 @@ export default function InsightsPage() {
   }, []);
 
   useEffect(() => {
-    // Subscribe to realtime updates for the authenticated user's profile and stock ownership
-    const unsub = subscribe(getUserProfileRef(), (res) => {
-      if (res.data) setProfileData(res.data);
-    });
-    return () => unsub();
+    // TODO: Subscribe to realtime updates for the authenticated user's profile (getUserProfileRef)
   }, []);
 
   useEffect(() => {
-    // Subscribe to realtime updates for top trending emojis partitioned by user city
-    const unsub = subscribe(getTopEmojisByCityRef(), (res) => {
-      if (res.data) setCityData(res.data);
-    });
-    return () => unsub();
+    // TODO: Subscribe to realtime updates for top trending emojis partitioned by user city (getTopEmojisByCityRef)
   }, []);
 
   useEffect(() => {
     setRadarLoading(true);
-    // Subscribe to realtime updates for trending emojis within a specified geographic radius
-    const unsub = subscribe(
-      getTrendingEmojisNearMeRef({
-        userLat: coords.lat,
-        userLng: coords.lng,
-        radiusMeters: radiusKm * 1000,
-      }),
-      (res) => {
-        if (res.data) setRadarData(res.data);
-        setRadarLoading(false);
-      },
-    );
-    return () => unsub();
+    // TODO: Subscribe to realtime updates for trending emojis within a specified geographic radius (getTrendingEmojisNearMeRef)
+    setRadarLoading(false);
   }, [coords.lat, coords.lng, radiusKm]);
 
   useEffect(() => {
@@ -164,7 +145,7 @@ export default function InsightsPage() {
           __html: `@keyframes radar-sweep { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } } .radar-sweep { background: conic-gradient(from 0deg, transparent 70%, rgba(6, 182, 212, 0.4) 100%); animation: radar-sweep 4s linear infinite; } .pigeon-overlays { z-index: 10 !important; }`,
         }}
       />
-      
+
       <div className="max-w-[90rem] mx-auto px-4 sm:px-6 pt-4 sm:pt-12 relative z-10">
         <div className="space-y-6 sm:space-y-8 w-full">
           <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 sm:gap-6 border-b border-gray-300 dark:border-[#333] pb-4 sm:pb-6">
@@ -179,7 +160,6 @@ export default function InsightsPage() {
           </header>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 items-start">
-
             <div className="bg-white dark:bg-[#111] border border-gray-200 dark:border-[#222] shadow-sm dark:shadow-none rounded-2xl p-4 flex flex-col w-full">
               <div className="flex justify-between items-start mb-4">
                 <div>
@@ -199,21 +179,44 @@ export default function InsightsPage() {
               <div className="relative w-full max-w-[280px] sm:max-w-[320px] mx-auto aspect-square bg-gray-50 dark:bg-[#050505] rounded-full border border-gray-200 dark:border-[#333] overflow-hidden flex items-center justify-center mb-4 shadow-inner">
                 <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.05)_1px,transparent_1px)] dark:bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:20px_20px]"></div>
 
-                <div className="absolute rounded-full border border-cyan-400/40 dark:border-cyan-900/40" style={{ width: `${(radiusKm / 100) * 100}%`, height: `${(radiusKm / 100) * 100}%` }}></div>
-                <div className="absolute rounded-full border border-cyan-500/60 dark:border-cyan-800/60" style={{ width: `${(radiusKm / 100) * 66}%`, height: `${(radiusKm / 100) * 66}%` }}></div>
-                <div className="absolute rounded-full border border-cyan-600/80 dark:border-cyan-500/80 shadow-[0_0_30px_rgba(6,182,212,0.1)] dark:shadow-[0_0_30px_rgba(6,182,212,0.2)]" style={{ width: `${(radiusKm / 100) * 33}%`, height: `${(radiusKm / 100) * 33}%` }}></div>
+                <div
+                  className="absolute rounded-full border border-cyan-400/40 dark:border-cyan-900/40"
+                  style={{
+                    width: `${(radiusKm / 100) * 100}%`,
+                    height: `${(radiusKm / 100) * 100}%`,
+                  }}
+                ></div>
+                <div
+                  className="absolute rounded-full border border-cyan-500/60 dark:border-cyan-800/60"
+                  style={{
+                    width: `${(radiusKm / 100) * 66}%`,
+                    height: `${(radiusKm / 100) * 66}%`,
+                  }}
+                ></div>
+                <div
+                  className="absolute rounded-full border border-cyan-600/80 dark:border-cyan-500/80 shadow-[0_0_30px_rgba(6,182,212,0.1)] dark:shadow-[0_0_30px_rgba(6,182,212,0.2)]"
+                  style={{
+                    width: `${(radiusKm / 100) * 33}%`,
+                    height: `${(radiusKm / 100) * 33}%`,
+                  }}
+                ></div>
                 <div className="absolute inset-0 rounded-full radar-sweep mix-blend-multiply dark:mix-blend-screen opacity-40 dark:opacity-50"></div>
                 <div className="absolute w-2 h-2 bg-cyan-500 dark:bg-cyan-400 rounded-full shadow-[0_0_10px_#06b6d4] dark:shadow-[0_0_10px_#22d3ee]"></div>
 
                 {!radarLoading &&
                   regionalTrends.slice(0, 5).map((trend: any, i: number) => {
-                    const angle = i * (360 / Math.min(regionalTrends.length, 5)) * (Math.PI / 180);
+                    const angle =
+                      i *
+                      (360 / Math.min(regionalTrends.length, 5)) *
+                      (Math.PI / 180);
                     const distance = 60 + (i % 2 === 0 ? 20 : -15);
                     return (
                       <div
                         key={`radar-${trend.symbol}`}
                         className="absolute text-xl sm:text-2xl drop-shadow-[0_0_10px_rgba(6,182,212,0.4)] dark:drop-shadow-[0_0_10px_rgba(6,182,212,0.8)] transition-all duration-500"
-                        style={{ transform: `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px)` }}
+                        style={{
+                          transform: `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px)`,
+                        }}
                       >
                         {trend.symbol}
                       </div>
@@ -224,20 +227,36 @@ export default function InsightsPage() {
               <div className="space-y-3 mt-auto border-t border-gray-200 dark:border-[#333] pt-3 sm:pt-4">
                 <div className="flex flex-row gap-2">
                   <div className="flex-1 bg-gray-50 dark:bg-[#0a0a0a] rounded border border-gray-300 dark:border-[#333] p-1.5 flex items-center focus-within:border-cyan-500 transition-colors">
-                    <span className="text-gray-500 text-[10px] font-mono mr-2">LAT</span>
+                    <span className="text-gray-500 text-[10px] font-mono mr-2">
+                      LAT
+                    </span>
                     <input
                       type="number"
                       value={coords.lat}
-                      onChange={(e) => setCoords({ ...coords, lat: parseFloat(e.target.value) || 0, name: "Manual Override" })}
+                      onChange={(e) =>
+                        setCoords({
+                          ...coords,
+                          lat: parseFloat(e.target.value) || 0,
+                          name: "Manual Override",
+                        })
+                      }
                       className="bg-transparent text-gray-900 dark:text-white font-mono text-xs w-full outline-none"
                     />
                   </div>
                   <div className="flex-1 bg-gray-50 dark:bg-[#0a0a0a] rounded border border-gray-300 dark:border-[#333] p-1.5 flex items-center focus-within:border-cyan-500 transition-colors">
-                    <span className="text-gray-500 text-[10px] font-mono mr-2">LNG</span>
+                    <span className="text-gray-500 text-[10px] font-mono mr-2">
+                      LNG
+                    </span>
                     <input
                       type="number"
                       value={coords.lng}
-                      onChange={(e) => setCoords({ ...coords, lng: parseFloat(e.target.value) || 0, name: "Manual Override" })}
+                      onChange={(e) =>
+                        setCoords({
+                          ...coords,
+                          lng: parseFloat(e.target.value) || 0,
+                          name: "Manual Override",
+                        })
+                      }
                       className="bg-transparent text-gray-900 dark:text-white font-mono text-xs w-full outline-none"
                     />
                   </div>
@@ -261,7 +280,9 @@ export default function InsightsPage() {
                 <div className="pt-1">
                   <div className="flex justify-between text-[10px] font-mono text-gray-600 dark:text-gray-500 mb-1.5 uppercase tracking-widest">
                     <span>Scan Radius</span>
-                    <span className="text-cyan-600 dark:text-cyan-400 font-bold">{radiusKm} KM</span>
+                    <span className="text-cyan-600 dark:text-cyan-400 font-bold">
+                      {radiusKm} KM
+                    </span>
                   </div>
                   <input
                     type="range"
@@ -286,7 +307,7 @@ export default function InsightsPage() {
                     RANK() OVER
                   </span>
                 </div>
-                
+
                 <div className="relative w-full aspect-[4/3] lg:aspect-[2/1] bg-gray-100 dark:bg-[#050505] rounded-xl border border-gray-200 dark:border-[#333] mb-4 overflow-hidden shadow-inner shrink-0 z-0">
                   {isMounted && (
                     <Map
@@ -301,15 +322,22 @@ export default function InsightsPage() {
                         if (isNaN(lat) || isNaN(lng)) return null;
 
                         return (
-                          <Overlay key={`${city.city}-${city.symbol}`} anchor={[lat, lng]} offset={[16, 32]}>
+                          <Overlay
+                            key={`${city.city}-${city.symbol}`}
+                            anchor={[lat, lng]}
+                            offset={[16, 32]}
+                          >
                             <div className="relative flex justify-center group cursor-pointer hover:scale-150 transition-transform origin-bottom">
                               <span className="text-2xl sm:text-3xl drop-shadow-[0_0_8px_rgba(217,70,239,0.5)] dark:drop-shadow-[0_0_8px_rgba(217,70,239,1)]">
                                 {city.symbol}
                               </span>
                               <div className="hidden group-hover:block absolute bottom-full mb-1 bg-white/95 dark:bg-black/90 text-[10px] p-2 rounded border border-gray-200 dark:border-[#333] shadow-lg whitespace-nowrap z-50 pointer-events-none">
-                                <p className="font-bold text-gray-900 dark:text-white uppercase">{city.city}</p>
+                                <p className="font-bold text-gray-900 dark:text-white uppercase">
+                                  {city.city}
+                                </p>
                                 <p className="text-fuchsia-600 dark:text-fuchsia-400 font-mono mt-0.5">
-                                  {Number(city.total_shares).toLocaleString()} SHARES
+                                  {Number(city.total_shares).toLocaleString()}{" "}
+                                  SHARES
                                 </p>
                               </div>
                             </div>
@@ -327,7 +355,9 @@ export default function InsightsPage() {
                       className="flex justify-between items-center bg-gray-50 dark:bg-[#0a0a0a] p-2 rounded-lg border border-gray-200 dark:border-[#333] hover:border-fuchsia-400 transition-colors"
                     >
                       <div className="flex items-center gap-2 sm:gap-3">
-                        <span className="text-lg sm:text-xl">{insight.symbol}</span>
+                        <span className="text-lg sm:text-xl">
+                          {insight.symbol}
+                        </span>
                         <div>
                           <p className="font-bold text-gray-900 dark:text-white text-[10px] sm:text-xs">
                             {insight.city}
@@ -344,7 +374,6 @@ export default function InsightsPage() {
                 </div>
               </div>
             </div>
-            
           </div>
         </div>
       </div>

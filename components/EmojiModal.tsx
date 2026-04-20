@@ -26,11 +26,11 @@ import {
 } from "recharts";
 import { useInspector } from "../lib/InspectorContext";
 
-import { subscribe } from "@firebase/data-connect";
-import {
-  getEmojiHistoryStatsRef,
-  getEmojiWhaleStatsRef,
-} from "@dataconnect/generated";
+// import { subscribe } from "@firebase/data-connect";
+// import {
+//   getEmojiHistoryStatsRef,
+//   getEmojiWhaleStatsRef,
+// } from "@dataconnect/generated";
 
 interface EmojiModalProps {
   emoji: any | null;
@@ -46,33 +46,13 @@ export default function EmojiModal({ emoji, onClose }: EmojiModalProps) {
 
   useEffect(() => {
     if (!emoji?.id) return;
-
     setStatsLoading(true);
-    // Subscribe to realtime historical price and moving average statistics for the selected emoji
-    const unsub = subscribe(
-      getEmojiHistoryStatsRef({ emojiId: emoji.id }),
-      (res) => {
-        if (res.data) setStatsData(res.data);
-        setStatsLoading(false);
-      },
-      (err) => {
-        console.error("History Realtime Error:", err);
-        setStatsLoading(false);
-      },
-    );
-    return () => unsub();
+    // TODO: Subscribe to realtime historical price and moving average statistics (getEmojiHistoryStatsRef)
+    setStatsLoading(false);
   }, [emoji?.id]);
 
   useEffect(() => {
-    // Subscribe to realtime whale statistics to identify the top shareholder for the selected emoji
-    const unsub = subscribe(
-      getEmojiWhaleStatsRef(),
-      (res) => {
-        if (res.data) setWhaleData(res.data);
-      },
-      (err) => console.error("Whale Realtime Error:", err),
-    );
-    return () => unsub();
+    // TODO: Subscribe to realtime whale statistics to identify top shareholders (getEmojiWhaleStatsRef)
   }, []);
 
   useEffect(() => {
